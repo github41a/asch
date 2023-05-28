@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dropdown Example</title>
+	<style>
+		/* Style the dropdown button */
+		.dropbtn {
+		  background-color: #4CAF50;
+		  color: white;
+		  padding: 16px;
+		  font-size: 16px;
+		  border: none;
+		  cursor: pointer;
+		}
+
+		/* Style the dropdown content */
+		.dropdown-content {
+		  display: none;
+		  position: absolute;
+		  z-index: 1;
+		}
+
+		/* Style the options inside the dropdown */
+		.dropdown-content option {
+		  color: black;
+		  padding: 12px 16px;
+		  text-decoration: none;
+		  display: block;
+		}
+
+		/* Change color of dropdown links on hover */
+		.dropdown-content option:hover {
+		  background-color: #f1f1f1;
+		}
+
+		/* Show the dropdown menu on hover */
+		.dropdown:hover .dropdown-content {
+		  display: block;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- The dropdown button -->
+	<div class="dropdown">
+		<button class="dropbtn">Dropdown</button>
+		<!-- The dropdown content -->
+		<select class="dropdown-content">
+			<option value="option1">Option 1</option>
+			<option value="option2">Option 2</option>
+			<option value="option3">Option 3</option>
+		</select>
+	</div>
+
+</body>
+</html>
