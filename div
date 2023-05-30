@@ -1,24 +1,24 @@
 <div class="w-150">
-  <table class="w-full">
+  <table class="w-full border">
     <thead>
-      <tr>
+      <tr class="bg-blue-800 text-white">
         <th class="px-4 py-2">Header 1</th>
         <th class="px-4 py-2">Header 2</th>
         <th class="px-4 py-2">Header 3</th>
       </tr>
     </thead>
     <tbody>
-      <tr class="bg-blue-100">
+      <tr class="bg-blue-100 hover:bg-blue-200">
         <td class="px-4 py-2">Data 1</td>
         <td class="px-4 py-2">Data 2</td>
         <td class="px-4 py-2">Data 3</td>
       </tr>
-      <tr class="bg-blue-200">
+      <tr class="bg-blue-200 hover:bg-blue-300">
         <td class="px-4 py-2">Data 4</td>
         <td class="px-4 py-2">Data 5</td>
         <td class="px-4 py-2">Data 6</td>
       </tr>
-      <tr class="bg-blue-300">
+      <tr class="bg-blue-300 hover:bg-blue-400">
         <td class="px-4 py-2">Data 7</td>
         <td class="px-4 py-2">Data 8</td>
         <td class="px-4 py-2">Data 9</td>
