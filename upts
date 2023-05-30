@@ -1,0 +1,48 @@
+import { Component } from '@angular/core';
+import { Chart } from 'chart.js';
+
+@Component({
+  selector: 'app-release-freq-report',
+  templateUrl: './release-freq-report.component.html',
+  styleUrls: ['./release-freq-report.component.css']
+})
+export class ReleaseFreqReportComponent {
+  title = "Release Report";
+
+  createChart() {
+    var ctx = document.getElementById('piechart') as HTMLCanvasElement;
+
+    var chartData = {
+      labels: ['Not Available: 50', 'Equal to 100: 12.9%', '51-99: 12.9%'],
+      datasets: [{
+        data: [10, 20, 30, 40, 50],
+        backgroundColor: ['#04a6e5', '#012b3b', '#036890', '#04a6e5', '#848fe5'],
+        hoverBackgroundColor: ['#1e2a39', '#353f4d', '#787f88', '#012b3b', '#836890'],
+        position: 'absolute',
+        right: 0,
+        top: 0
+      }]
+    };
+
+    var chartOptions = {
+      responsive: true,
+      legend: {
+        position: 'top',
+      },
+      animation: {
+        animateScale: true,
+        animateRotate: true
+      }
+    };
+
+    var pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: chartData,
+      options: chartOptions
+    });
+
+    // Save chart data in local storage
+    localStorage.setItem("chartData", JSON.stringify(chartData));
+    localStorage.setItem("chartOptions", JSON.stringify(chartOptions));
+  }
+}
