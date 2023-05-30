@@ -1,57 +1,47 @@
-import { Component, OnInit } from '@angular/core';
-import { Chart, ChartOptions } from 'chart.js';
-import { ChartjsService } from './chartjs.service';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import Chart from 'chart.js/auto';
+import { AbsoluteSourceSpan } from '@angular/compiler';
 
 @Component({
   selector: 'app-release-freq-report',
   templateUrl: './release-freq-report.component.html',
   styleUrls: ['./release-freq-report.component.css']
 })
-export class ReleaseFreqReportComponent implements OnInit {
-  title = "Release Report";
-
-  constructor(private chartjsService: ChartjsService) { }
-
-  ngOnInit() {
-    // Retrieve chart data and options from local storage if available
-    const storedChartData = localStorage.getItem("chartData");
-    const storedChartOptions = localStorage.getItem("chartOptions");
-
-    if (storedChartData && storedChartOptions) {
-      const chartData = JSON.parse(storedChartData);
-      const chartOptions = JSON.parse(storedChartOptions);
-      this.chartjsService.createPieChart(chartData, chartOptions, 'piechart');
-    }
-  }
+export class ReleaseFreqReportComponent {
+  title = 'Release Report';
+  showChart = false;
 
   createChart() {
-    var chartData = {
+    const ctx = document.getElementById('piechart') as HTMLCanvasElement;
+
+    const chartData = {
       labels: ['Not Available: 50', 'Equal to 100: 12.9%', '51-99: 12.9%'],
       datasets: [{
         data: [10, 20, 30, 40, 50],
-        backgroundColor: ['#04a6e5', '#012b3b', '#036890', '#04a6e5', '#848fe5'],
-        hoverBackgroundColor: ['#1e2a39', '#353f4d', '#787f88', '#012b3b', '#836890'],
-        position: 'absolute',
-        right: 0,
-        top: 0
-      }]
+        backgroundColor: ['#84a6e5', '#012b3b', '#036890', '#04a6e5', '#8048fe5'],
+        hoverBackgroundColor: ['#1e2a39', '#353f4d', '#787f88', '#012b3b', '#036890']
+      }],
+      position: AbsoluteSourceSpan,
+      right: 0,
+      top: 0
     };
 
-    var chartOptions: ChartOptions = {
+    const chartOptions = {
       responsive: true,
-      legend: {
-        position: 'top',
-      },
+      position: 'top',
       animation: {
         animateScale: true,
         animateRotate: true
       }
     };
 
-    this.chartjsService.createPieChart(chartData, chartOptions, 'piechart');
+    const pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: chartData,
+      options: chartOptions
+    });
 
-    // Save chart data and options in local storage
-    localStorage.setItem("chartData", JSON.stringify(chartData));
-    localStorage.setItem("chartOptions", JSON.stringify(chartOptions));
+    this.showChart = true;
   }
 }
