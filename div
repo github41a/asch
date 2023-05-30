@@ -1,41 +1,28 @@
-<div
-  class="w-full h-screen bg-slate-100 p-10"
-  ng-app="myApp"
-  ng-controller="myController"
->
-  <form class="p-4" ng-submit="generateChartAndTable()">
-    <label for="input1">Report Type </label>
-    <select
-      id="report-type"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 p-1 mr-2"
-    >
-      <option value="Release Frequency Distribution">
-        Release Frequency Distribution
-      </option>
-    </select>
-    <label for="input2">Select Date </label>
-    <select
-      id="report-type"
-      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 p-1 mr-2"
-    >
-      <option value="November 2022">November 2022</option>
-      <option value="May 2022">May 2022</option>
-    </select>
-    <button class="bg-blue-500 px-2 py-1 text-white rounded-sm" type="submit">
-      Generate
-    </button>
-  </form>
-  <canvas id="pieChart" width="400" height="400"></canvas>
-  <!-- <table>
+<div class="w-150">
+  <table class="w-full">
     <thead>
       <tr>
-        <th></th>
-        <th></th>
+        <th class="px-4 py-2">Header 1</th>
+        <th class="px-4 py-2">Header 2</th>
+        <th class="px-4 py-2">Header 3</th>
       </tr>
     </thead>
     <tbody>
-      <th></th>
-      <th></th>
+      <tr class="bg-blue-100">
+        <td class="px-4 py-2">Data 1</td>
+        <td class="px-4 py-2">Data 2</td>
+        <td class="px-4 py-2">Data 3</td>
+      </tr>
+      <tr class="bg-blue-200">
+        <td class="px-4 py-2">Data 4</td>
+        <td class="px-4 py-2">Data 5</td>
+        <td class="px-4 py-2">Data 6</td>
+      </tr>
+      <tr class="bg-blue-300">
+        <td class="px-4 py-2">Data 7</td>
+        <td class="px-4 py-2">Data 8</td>
+        <td class="px-4 py-2">Data 9</td>
+      </tr>
     </tbody>
-  </table> -->
+  </table>
 </div>
