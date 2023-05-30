@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Component, OnInit } from '@angular/core';
+import { ChartOptions } from 'chart.js';
+import { ChartjsService } from './chartjs.service';
 
 @Component({
   selector: 'app-release-freq-report',
   templateUrl: './release-freq-report.component.html',
   styleUrls: ['./release-freq-report.component.css']
 })
-export class ReleaseFreqReportComponent {
+export class ReleaseFreqReportComponent implements OnInit {
   title = "Release Report";
 
-  createChart() {
-    var ctx = document.getElementById('piechart') as HTMLCanvasElement;
+  constructor(private chartjsService: ChartjsService) { }
 
+  ngOnInit() {
+    this.createChart();
+  }
+
+  createChart() {
     var chartData = {
       labels: ['Not Available: 50', 'Equal to 100: 12.9%', '51-99: 12.9%'],
       datasets: [{
@@ -24,7 +29,7 @@ export class ReleaseFreqReportComponent {
       }]
     };
 
-    var chartOptions = {
+    var chartOptions: ChartOptions = {
       responsive: true,
       legend: {
         position: 'top',
@@ -35,14 +40,6 @@ export class ReleaseFreqReportComponent {
       }
     };
 
-    var pieChart = new Chart(ctx, {
-      type: 'pie',
-      data: chartData,
-      options: chartOptions
-    });
-
-    // Save chart data in local storage
-    localStorage.setItem("chartData", JSON.stringify(chartData));
-    localStorage.setItem("chartOptions", JSON.stringify(chartOptions));
+    this.chartjsService.createPieChart(chartData, chartOptions, 'piechart');
   }
 }
