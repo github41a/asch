@@ -1,33 +1,42 @@
-<div class="relative h-6 w-full bg-gray-200">
-  <div class="h-full bg-blue-500" id="progressBar" style="width: 0;"></div>
-  <div class="absolute inset-0 flex items-center justify-center">
-    <div class="text-white text-sm font-bold" id="progressText"></div>
-  </div>
-</div>
+import React, { useEffect, useRef } from 'react';
+import Chart from 'chart.js';
 
-<script>
-  // Get the progress bar and progress text elements
-  const progressBar = document.getElementById('progressBar');
-  const progressText = document.getElementById('progressText');
+const BarChart: React.FC = () => {
+  const chartRef = useRef<HTMLCanvasElement>(null);
 
-  // Set the initial progress value (between 0 and 100)
-  let progress = 0;
+  useEffect(() => {
+    if (chartRef.current) {
+      const ctx = chartRef.current.getContext('2d');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            datasets: [
+              {
+                label: 'Traffic',
+                data: [2112, 2343, 2545, 3423, 2365, 1985, 987],
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+    }
+  }, []);
 
-  // Update the progress bar width and text
-  const updateProgressBar = () => {
-    progressBar.style.width = `${progress}%`;
-    progressText.textContent = `${progress}%`;
-  };
+  return <canvas ref={chartRef} />;
+};
 
-  // Update the progress on hover
-  progressBar.addEventListener('mouseover', () => {
-    progress = Math.floor(Math.random() * 101); // Generate a random progress value between 0 and 100
-    updateProgressBar();
-  });
-
-  // Reset the progress on mouseout
-  progressBar.addEventListener('mouseout', () => {
-    progress = 0;
-    updateProgressBar();
-  });
-</script>
+export default BarChart;
