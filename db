@@ -1,0 +1,62 @@
+// Import necessary modules
+import * as sqlite3 from 'sqlite3';
+
+// Create a database connection
+const db = new sqlite3.Database('path/to/database.db');
+
+// Get current date
+const currentDate = new Date();
+
+// Construct the query
+const query = `
+  SELECT ServiceName, CI_Count, Incident_Count, Support_and_Operations,
+    Software_Amortisation, Vendor_costs, Storage_Cost, Database_Cost,
+    Total_Cost, Rank
+  FROM allconcdatalist
+  WHERE MonthEnd = ?
+`;
+
+// Execute the query
+db.all(query, [currentDate], (err, rows) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  // Filteration code starts
+  let currentMonthData = rows.filter((row) => row.adm_ind === 'Y');
+  let result;
+
+  if (currentMonthData.length > 0) {
+    result = static.merge(currentMonthData, { on: 'ServiceName', how: 'left' }).fillna(0);
+  } else {
+    result = p_merge_df.merge(currentMonthData, { on: 'ServiceName', how: 'left' }).fillna(0);
+  }
+  // Filteration code ends
+
+  const datelist = [currentDate];
+  
+  currentMonthData = result.map((row) => ({
+    ServiceName: row.ServiceName,
+    CI_Count: row.CI_Count,
+    Incident_Count: row.Incident_Count,
+    Support_and_Operations: Math.round(row.Support_and_Operations),
+    Software_Amortisation: Math.round(row.Software_Amortisation),
+    Vendor_costs: Math.round(row.Vendor_costs),
+    Storage_Cost: Math.round(row.Storage_Cost),
+    Database_Cost: Math.round(row.Database_Cost),
+    Total_Cost: Math.round(row.Total_Cost),
+    Rank: row.Rank
+  }));
+
+  const donught_so = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Support_and_Operations), 0);
+  const donught_swa = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Software_Amortisation), 0);
+  const donught_vc = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Vendor_costs), 0);
+  const donught_sc = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Storage_Cost), 0);
+  const donught_dc = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Database_Cost), 0);
+  const donught_tc = currentMonthData.reduce((sum, row) => sum + parseFloat(row.Total_Cost), 0);
+
+  // Dashboard current month code ends
+
+  // Continue with the rest of your code...
+});
