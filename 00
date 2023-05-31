@@ -1,6 +1,6 @@
 <div class="flex flex-wrap justify-center">
   <div class="bg-white shadow-lg rounded-lg mx-4 my-6 max-w-xs overflow-hidden">
-    <div class="px-4 py-6">
+    <div class="px-4 py-6 hover:bg-blue-900 transition duration-300 ease-in-out">
       <h2 class="text-xl font-bold">Card 1</h2>
       <div class="flex justify-between items-center mt-4">
         <div>
@@ -21,6 +21,7 @@
   </div>
   <!-- Repeat the above code for the remaining cards -->
 </div>
+
 
 
 
