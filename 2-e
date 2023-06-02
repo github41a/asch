@@ -1,0 +1,93 @@
+
+Sure, here is the code to create a table in Angular that shows data from an Excel file in table format on the screen. It has sorting functionality for both numbers and alphabetical data, as well as the ability to search for data, copy the entire table, and show data in batches of 0-10, 10-50, or 50-all.
+
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import * as XLSX from 'xlsx';
+
+@Component({
+selector: 'app-table',
+templateUrl: './table.component.html',
+styleUrls: ['./table.component.css']
+})
+export class TableComponent implements OnInit {
+
+data: any[] = [];
+
+constructor(private tableDataSource: MatTableDataSource<any>) {}
+
+ngOnInit() {
+this.loadData();
+}
+
+loadData() {
+const reader = new FileReader();
+reader.onload = (event) => {
+const workbook = XLSX.read(event.target.result, { type: 'binary' });
+const sheet = workbook.Sheets[workbook.SheetNames[0]];
+this.data = sheet.data;
+this.tableDataSource.data = this.data;
+};
+reader.readAsArrayBuffer(this.file);
+}
+
+sort(column: string, ascending: boolean) {
+this.tableDataSource.sort(column, ascending);
+}
+
+search(term: string) {
+this.tableDataSource.filter(row => row.some(cell => cell.toLowerCase().includes(term.toLowerCase())));
+}
+
+copy() {
+const csv = this.tableDataSource.data.map(row => row.join(','));
+const blob = new Blob([csv], { type: 'text/csv' });
+navigator.clipboard.write(blob);
+}
+
+showBatch(batchSize: number) {
+this.tableDataSource.paginator.pageSize = batchSize;
+}
+
+}
+
+
+
+
+
+<table mat-table [dataSource]="tableDataSource" [paginator]="true" [pageSize]="10">
+<thead>
+<tr>
+<th mat-header-cell *ngFor="let column of columns">
+{{column}}
+</th>
+</tr>
+</thead>
+<tbody>
+<tr *ngFor="let row of data">
+<td>{{row[columns[0]]}}</td>
+<td>{{row[columns[1]]}}</td>
+<td>{{row[columns[2]]}}</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+table {
+width: 100%;
+border-collapse: collapse;
+}
+
+th, td {
+border: 1px solid black;
+padding: 5px;
+}
