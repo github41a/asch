@@ -1,61 +1,50 @@
-"styles": [
-             ...
-             "node_modules/bootstrap/dist/css/bootstrap.min.css",
-             "node_modules/datatables.net-dt/css/jquery.dataTables.css"
-           ],
-           "scripts": [
-             "node_modules/jquery/dist/jquery.js",
-             "node_modules/bootstrap/dist/js/bootstrap.js",
-             "node_modules/datatables.net/js/jquery.dataTables.js",
-             "node_modules/jszip/dist/jszip.js",
-             "node_modules/datatables.net-buttons/js/dataTables.buttons.js",
-             "node_modules/datatables.net-buttons/js/buttons.colVis.js",
-             "node_modules/datatables.net-buttons/js/buttons.flash.js",
-             "node_modules/datatables.net-buttons/js/buttons.html5.js",
-             "node_modules/datatables.net-buttons/js/buttons.print.js"
-           ]
-ts
+$background: #2c303a;
 
-...
-export class AppComponent {
-  ...
-  public data = [
-    {name: 'test', email: 'test@gmail.com', website:'test.com'},
-    {name: 'test', email: 'test@gmail.com', website:'test.com'},
-    {name: 'test', email: 'test@gmail.com', website:'test.com'},
-    {name: 'test', email: 'test@gmail.com', website:'test.com'},
-];
-  
-  dtOptions: any = {};
-  ngOnInit() {
-    this.dtOptions = {
-      pagingType: 'full_numbers',
-      pageLength: 3,
-      processing: true,
-      dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'print'
-        ]
-    };
-}
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: $background;
 }
 
+.container {
+  margin: 100px auto;
+  width: 500px;
+  text-align: center;
+}
 
+.progress {
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+}
 
-html
-<table class="table table-striped table-bordered table-sm row-border hover" datatable [dtOptions]="dtOptions">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Website</th>
-    </tr>
-  </thead>
-  <tbody>
-   <tr *ngFor="let group of data">
-         <td>{{group.name}}</td>
-         <td>{{group.email}}</td>
-         <td>{{group.website}}</td>
-     </tr>
-  </tbody>
-</table>
+.progress-bar {	
+  height: 18px;
+	background-color: #ee303c;  
+  border-radius: 4px; 
+  transition: 0.4s linear;  
+  transition-property: width, background-color;    
+}
+
+.progress-striped .progress-bar { 	
+  background-color: #FCBC51; 
+  width: 50%; 
+  background-image: linear-gradient(
+        45deg, rgb(252,163,17) 25%, 
+        transparent 25%, transparent 50%, 
+        rgb(252,163,17) 50%, rgb(252,163,17) 75%,
+        transparent 75%, transparent); 
+  animation: progressAnimationStrike 6s;
+}
+
+@keyframes progressAnimationStrike {
+     from { width: 0 }
+     to   { width: 50% }
+}
+ 
+ <div class="container">    
+  <div class="progress progress-striped">
+    <div class="progress-bar">
+    </div>                       
+  </div> 
+</div>
