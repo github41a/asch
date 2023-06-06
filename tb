@@ -1,0 +1,109 @@
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Table rows will be dynamically generated -->
+    </tbody>
+  </table>
+</div>
+
+------------------------
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.table thead th {
+  background-color: #f5f5f5;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+  background-color: #ebebeb;
+}
+--------------------------------------------
+interface RowData {
+  column1: string;
+  column2: string;
+  column3: string;
+}
+
+class TableComponent {
+  private container: HTMLElement;
+  private tableBody: HTMLElement;
+  private data: RowData[];
+
+  constructor(containerId: string) {
+    this.container = document.getElementById(containerId);
+    this.tableBody = this.container.querySelector('tbody');
+    this.data = [];
+  }
+
+  setData(data: RowData[]) {
+    this.data = data;
+  }
+
+  render() {
+    this.clearTableBody();
+
+    for (const rowData of this.data) {
+      const row = document.createElement('tr');
+
+      const column1Cell = document.createElement('td');
+      column1Cell.textContent = rowData.column1;
+      row.appendChild(column1Cell);
+
+      const column2Cell = document.createElement('td');
+      column2Cell.textContent = rowData.column2;
+      row.appendChild(column2Cell);
+
+      const column3Cell = document.createElement('td');
+      column3Cell.textContent = rowData.column3;
+      row.appendChild(column3Cell);
+
+      this.tableBody.appendChild(row);
+    }
+  }
+
+  private clearTableBody() {
+    while (this.tableBody.firstChild) {
+      this.tableBody.firstChild.remove();
+    }
+  }
+}
+--------------------------------
+// Create an instance of the table component
+const table = new TableComponent('table-container');
+
+// Set the data for the table
+const data: RowData[] = [
+  { column1: 'Data 1', column2: 'Data 2', column3: 'Data 3' },
+  { column1: 'Data 4', column2: 'Data 5', column3: 'Data 6' },
+  // Add more data as needed
+];
+table.setData(data);
+
+// Render the table
+table.render();
+-----------------------------
