@@ -1,0 +1,81 @@
+import axios from 'axios';
+
+// Function to calculate the sum by making a request to the server
+async function calculateSum(): Promise<number> {
+  try {
+    // Send GET request to the '/calculate-sum' endpoint on the server
+    const response = await axios.get('http://localhost:3000/calculate-sum');
+    const { sum } = response.data; // Extract the sum value from the response
+    return sum; // Return the calculated sum
+  } catch (error) {
+    console.error('Error calculating sum:', error);
+    throw error;
+  }
+}
+
+calculateSum()
+  .then((sum) => {
+    console.log('Total Sum:', sum); // Output the calculated sum
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+const XLSX = require('xlsx');
+const { DataFrame } = require('pandas-js');
+const express = require('express');
+
+const app = express();
+const port = 3000;
+
+// Endpoint to calculate the sum
+app.get('/calculate-sum', (req, res) => {
+  const filename = './MasterSheet_Vi_new_Feb23.xlsx';
+  const totalSum = calculateCICount(filename);
+  res.send({ sum: totalSum });
+});
+
+// Function to fetch records from an Excel file
+function fetchRecordsFromExcel(filename) {
+  const excelData = XLSX.readFile(filename);
+  return Object.keys(excelData.Sheets).map((name) => ({
+    name,
+    data: XLSX.utils.sheet_to_json(excelData.Sheets[name]),
+  }));
+}
+
+// Function to calculate the CI_Count sum
+function calculateCICount(filename) {
+  const records = fetchRecordsFromExcel(filename);
+  let sum = 0;
+
+  records.forEach((record) => {
+    const dataFrame = new DataFrame(record.data);
+    const columnIndex = 3;
+    const cicountCol = dataFrame.getColumn('CI_Count');
+
+    cicountCol.forEach((value) => {
+      if (typeof value === 'number' && !isNaN(value)) {
+        sum += value;
+      }
+    });
+  });
+
+  return sum;
+}
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
