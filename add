@@ -1,0 +1,122 @@
+import * as XLSX from 'xlsx';
+
+interface ExcelData {
+  CI_Count: number;
+  Incident_Count: number;
+  Total_Cost: number;
+  Storage_Cost: number;
+  Database_Cost: number;
+  // Add other columns as needed
+}
+
+function home(): void {
+  // Read data from Excel file (MasterSheet.xlsx)
+  const data: ExcelData[] = readExcelData('MasterSheet.xlsx');
+
+  // Perform calculations
+  const TotalCI: number = calculateSum(data, 'CI_Count');
+  const TotalIC: number = calculateSum(data, 'Incident_Count');
+  const TotalTC: number = calculateSum(data, 'Total_Cost');
+  const TotalSC: number = calculateSum(data, 'Storage_Cost');
+  const TotalDC: number = calculateSum(data, 'Database_Cost');
+
+  // Format currency values
+  const formattedTotalTC: string = formatCurrency(TotalTC);
+  const formattedTotalSC: string = formatCurrency(TotalSC);
+  const formattedTotalDC: string = formatCurrency(TotalDC);
+
+  // Round decimal values
+  const roundedTotalCI: number = roundValue(TotalCI);
+  const roundedTotalIC: number = roundValue(TotalIC);
+
+  // Perform other calculations
+  const PrevTotalCI: number = 100; // Placeholder value, replace with actual previous total CI
+  const PrevTotalIC: number = 200; // Placeholder value, replace with actual previous total IC
+  const PrevTotalTC: number = 1000; // Placeholder value, replace with actual previous total TC
+  const PrevTotalSC: number = 500; // Placeholder value, replace with actual previous total SC
+  const PrevTotalDC: number = 300; // Placeholder value, replace with actual previous total DC
+
+  const subtotalCI: number = calculatePercentageDifference(TotalCI, PrevTotalCI);
+  const subtotalIC: number = calculatePercentageDifference(TotalIC, PrevTotalIC);
+  const subTotalTC: number = calculatePercentageDifference(TotalTC, PrevTotalTC);
+  const subTotalSC: number = calculatePercentageDifference(TotalSC, PrevTotalSC);
+  const subTotalDC: number = calculatePercentageDifference(TotalDC, PrevTotalDC);
+
+  // Get maximum and minimum values
+  const maxTotalCost: number = calculateMaxValue(data, 'Total_Cost');
+  const minTotalCost: number = calculateMinValue(data, 'Total_Cost');
+
+  // Format maximum and minimum values
+  const formattedMaxTotalCost: string = formatCurrency(maxTotalCost);
+  const formattedMinTotalCost: string = formatCurrency(minTotalCost);
+
+  // Prepare data for graph
+  const dashGraphData: any[] = prepareGraphData(data);
+
+  // Convert dashGraphData to JSON
+  const jsondash: string = JSON.stringify(dashGraphData);
+
+  // Render the template with data
+  renderTemplate(jsondash, TotalCI, TotalIC, formattedTotalTC, formattedTotalSC, formattedTotalDC, subtotalCI, subtotalIC,
+    subTotalTC, subTotalSC, subTotalDC, formattedMaxTotalCost, formattedMinTotalCost);
+}
+
+function readExcelData(filename: string): ExcelData[] {
+  const workbook: XLSX.WorkBook = XLSX.readFile(filename);
+  const worksheet: XLSX.WorkSheet = workbook.Sheets[workbook.SheetNames[0]];
+  const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+  const excelData: ExcelData[] = jsonData.map((item: any) => ({
+    CI_Count: Number(item.CI_Count),
+    Incident_Count: Number(item.Incident_Count),
+    Total_Cost: Number(item.Total_Cost),
+    Storage_Cost: Number(item.Storage_Cost),
+    Database_Cost: Number(item.Database_Cost),
+    // Add other columns as needed
+  }));
+
+  return excelData;
+}
+
+function formatCurrency(value: number): string {
+  // Implement currency formatting logic here
+  // Replace this with your own currency formatting code
+  return `$${value.toFixed(2)}`;
+}
+
+function roundValue(value: number): number {
+  // Implement rounding logic here
+  // Replace this with your own rounding code
+  return Math.round(value);
+}
+
+function calculatePercentageDifference(newValue: number, oldValue: number): number {
+  // Implement percentage difference calculation logic here
+  // Replace this with your own percentage difference calculation code
+  return ((newValue - oldValue) / oldValue) * 100;
+}
+
+function calculateSum(data: ExcelData[], column: keyof ExcelData): number {
+  return data.reduce((sum: number, item: ExcelData) => sum + item[column], 0);
+}
+
+function calculateMaxValue(data: ExcelData[], column: keyof ExcelData): number {
+  return data.reduce((max: number, item: ExcelData) => Math.max(max, item[column]), 0);
+}
+
+function calculateMinValue(data: ExcelData[], column: keyof ExcelData): number {
+  return data.reduce((min: number, item: ExcelData) => Math.min(min, item[column]), Infinity);
+}
+
+function prepareGraphData(data: ExcelData[]): any[] {
+  // Implementation to prepare data for graph goes here
+  // Replace this with your own logic to prepare data for graph
+  return [];
+}
+
+function renderTemplate(jsondash: string, TotalCI: number, TotalIC: number, TotalTC: string, TotalSC: string,
+  TotalDC: string, subtotalCI: number, subtotalIC: number, subTotalTC: number, subTotalSC: number,
+  subTotalDC: number, maxTotalCost: string, minTotalCost: string): void {
+  // Implementation to render the HTML template goes here
+  // Replace this with your own logic to render the HTML template
+}
