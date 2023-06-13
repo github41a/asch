@@ -1,49 +1,39 @@
-import express from 'express';
-import { DataFrame } from 'dataframe-js';
-import * as XLSX from 'xlsx';
+const express = require('express');
+const DataFrame = require('dataframe-js').DataFrame;
+const XLSX = require('xlsx');
 
-// Create an Express.js app
 const app = express();
 const port = 3000;
-
-interface ExcelData {
-  CI_Count: number;
-  Incident_Count: number;
-  Total_Cost: number;
-  Storage_Cost: number;
-  Database_Cost: number;
-  // Add other columns as needed
-}
 
 // Route for handling the HTTP GET request
 app.get('/', async (req, res) => {
   try {
     // Read data from Excel file (MasterSheet.xlsx) and convert to DataFrame
-    const data: DataFrame = await readExcelData('MasterSheet.xlsx');
+    const data = await readExcelData('MasterSheet.xlsx');
 
     // Perform calculations and formatting
-    const TotalCI: number = calculateSum(data, 'CI_Count');
-    const TotalIC: number = calculateSum(data, 'Incident_Count');
-    const TotalTC: number = calculateSum(data, 'Total_Cost');
-    const TotalSC: number = calculateSum(data, 'Storage_Cost');
-    const TotalDC: number = calculateSum(data, 'Database_Cost');
+    const totalCI = calculateSum(data, 'CI_Count');
+    const totalIC = calculateSum(data, 'Incident_Count');
+    const totalTC = calculateSum(data, 'Total_Cost');
+    const totalSC = calculateSum(data, 'Storage_Cost');
+    const totalDC = calculateSum(data, 'Database_Cost');
 
-    const formattedTotalTC: string = formatCurrency(TotalTC);
-    const formattedTotalSC: string = formatCurrency(TotalSC);
-    const formattedTotalDC: string = formatCurrency(TotalDC);
+    const formattedTotalTC = formatCurrency(totalTC);
+    const formattedTotalSC = formatCurrency(totalSC);
+    const formattedTotalDC = formatCurrency(totalDC);
 
-    const roundedTotalCI: number = roundValue(TotalCI);
-    const roundedTotalIC: number = roundValue(TotalIC);
+    const roundedTotalCI = roundValue(totalCI);
+    const roundedTotalIC = roundValue(totalIC);
 
     // Prepare the response JSON object
     const response = {
-      TotalCI,
-      TotalIC,
-      TotalTC: formattedTotalTC,
-      TotalSC: formattedTotalSC,
-      TotalDC: formattedTotalDC,
-      RoundedTotalCI: roundedTotalCI,
-      RoundedTotalIC: roundedTotalIC,
+      totalCI,
+      totalIC,
+      totalTC: formattedTotalTC,
+      totalSC: formattedTotalSC,
+      totalDC: formattedTotalDC,
+      roundedTotalCI,
+      roundedTotalIC,
     };
 
     // Send the response as JSON
@@ -55,16 +45,16 @@ app.get('/', async (req, res) => {
 });
 
 // Read Excel data from file and convert to DataFrame
-async function readExcelData(filename: string): Promise<DataFrame> {
+function readExcelData(filename) {
   return new Promise((resolve, reject) => {
     XLSX.readFile(filename, (error, workbook) => {
       if (error) {
         reject(error);
       } else {
-        const worksheet: XLSX.WorkSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        const excelData: ExcelData[] = jsonData.map((item: any) => ({
+        const excelData = jsonData.map((item) => ({
           CI_Count: Number(item.CI_Count),
           Incident_Count: Number(item.Incident_Count),
           Total_Cost: Number(item.Total_Cost),
@@ -81,21 +71,21 @@ async function readExcelData(filename: string): Promise<DataFrame> {
 }
 
 // Currency formatting
-function formatCurrency(value: number): string {
+function formatCurrency(value) {
   return `$${value.toFixed(2)}`;
 }
 
 // Rounding decimal values
-function roundValue(value: number): number {
+function roundValue(value) {
   return Math.round(value);
 }
 
 // Calculation: Sum of a specific column
-function calculateSum(data: DataFrame, column: keyof ExcelData): number {
+function calculateSum(data, column) {
   return data
     .getColumn(column)
     .toArray()
-    .reduce((sum: number, item: number) => sum + item, 0);
+    .reduce((sum, item) => sum + item, 0);
 }
 
 // Start the server
