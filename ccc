@@ -1,26 +1,3 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
-
-@Component({
-  selector: 'app-stacked-bar-chart',
-  templateUrl: './stacked-bar-chart.component.html',
-  styleUrls: ['./stacked-bar-chart.component.css']
-})
-export class StackedBarChartComponent implements OnInit, AfterViewInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    // Chart code
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-
     let chart = am4core.create("chartdiv", am4charts.XYChart);
     chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
 
@@ -88,7 +65,7 @@ export class StackedBarChartComponent implements OnInit, AfterViewInit {
     series1.dataFields.valueYShow = "totalPercent";
     series1.dataItems.template.locations.categoryX = 0.5;
     series1.stacked = true;
-    series1.tooltip.pointerOrientation = "vertical";
+    series1.tooltip.pointerOrientation = "vertical" as any; // Type assertion
 
     let bullet1 = series1.bullets.push(new am4charts.LabelBullet());
     bullet1.interactionsEnabled = false;
@@ -106,7 +83,7 @@ export class StackedBarChartComponent implements OnInit, AfterViewInit {
     series2.dataFields.valueYShow = "totalPercent";
     series2.dataItems.template.locations.categoryX = 0.5;
     series2.stacked = true;
-    series2.tooltip.pointerOrientation = "vertical";
+    series2.tooltip.pointerOrientation = "vertical" as any; // Type assertion
 
     let bullet2 = series2.bullets.push(new am4charts.LabelBullet());
     bullet2.interactionsEnabled = false;
@@ -124,7 +101,7 @@ export class StackedBarChartComponent implements OnInit, AfterViewInit {
     series3.dataFields.valueYShow = "totalPercent";
     series3.dataItems.template.locations.categoryX = 0.5;
     series3.stacked = true;
-    series3.tooltip.pointerOrientation = "vertical";
+    series3.tooltip.pointerOrientation = "vertical" as any; // Type assertion
 
     let bullet3 = series3.bullets.push(new am4charts.LabelBullet());
     bullet3.interactionsEnabled = false;
@@ -133,9 +110,3 @@ export class StackedBarChartComponent implements OnInit, AfterViewInit {
     bullet3.label.fill = am4core.color("#ffffff");
 
     chart.scrollbarX = new am4core.Scrollbar();
-  }
-}
-
-
-
-<div id="chartdiv" style="width: 100%; height: 500px;"></div>
