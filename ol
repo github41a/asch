@@ -1,78 +1,37 @@
 import pandas as pd
-import sqlite3
-
-# Function to check if a table exists in the database
-def table_exists(conn, table_name):
-    query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
-    cursor = conn.cursor()
-    cursor.execute(query)
-    result = cursor.fetchone()
-    return result is not None
-
-# Read the SQL file
-def read_sql_file(sql_file):
-    with open(sql_file, 'r') as file:
-        sql_query = file.read()
-    return sql_query
 
 # Read the Excel file
-def read_excel_file(excel_file):
-    data = pd.read_excel(excel_file)
-    return data
+data = pd.read_excel('input.xlsx')
 
-# Check if conditions are satisfied and get unsatisfied records
-def check_conditions(sql_query, data):
-    # Create an in-memory SQLite database
-    conn = sqlite3.connect(':memory:')
+# Apply the conditions to filter the data
+filtered_data = data[
+    (data['line_ref'] == 3) & 
+    (data['entity'] == 'a1-1') & 
+    (data['filter'] == 'l2-100')
+]
 
-    # Check if the data table exists in the database
-    if not table_exists(conn, 'data'):
-        data.to_sql('data', conn, index=False)
+# Check for null values in line_ref, entity, and filter columns
+null_records = data[
+    (data['line_ref'].isnull()) |
+    (data['entity'].isnull()) |
+    (data['filter'].isnull())
+]
 
-    # Execute the SQL query
-    cursor = conn.cursor()
-    cursor.execute(sql_query)
+# Print records with null values
+if not null_records.empty:
+    print("Records with null values:")
+    print(null_records)
 
-    # Fetch all the results
-    results = cursor.fetchall()
+# Check if any records satisfy the conditions
+if not filtered_data.empty:
+    # Create a new text file
+    with open('output.txt', 'w') as file:
+        # Write the filtered records to the text file
+        file.write(filtered_data.to_string(index=False))
 
-    # Close the database connection
-    conn.close()
+        # Alternatively, if you want to write specific columns, you can do:
+        # filtered_data[['col1', 'col2', 'col3']].to_string(index=False)
 
-    # Return the unsatisfied records
-    return results
-
-# Main script
-def main():
-    # Input files
-    sql_file = 'input.sql'
-    excel_file = 'input.xlsx'
-    output_file = 'output.txt'
-
-    # Read SQL query from file
-    sql_query = read_sql_file(sql_file)
-
-    # Read Excel data
-    data = read_excel_file(excel_file)
-
-    # Check if conditions are satisfied and get unsatisfied records
-    unsatisfied_records = check_conditions(sql_query, data)
-
-    # Write the records to the output file
-    with open(output_file, 'w') as file:
-        if unsatisfied_records:
-            file.write("Records not satisfying the conditions:\n")
-            for record in unsatisfied_records:
-                file.write(str(record) + "\n")
-            file.write("\n")
-
-        satisfied_records = data[~data.isin(unsatisfied_records)].dropna()
-        if not satisfied_records.empty:
-            file.write("Records satisfying the conditions:\n")
-            file.write(satisfied_records.to_string(index=False))
-            file.write("\n")
-
-    print("Records written to", output_file)
-
-if __name__ == '__main__':
-    main()
+    print("Filtered data has been written to output.txt")
+else:
+    print("No records satisfy the specified conditions.")
