@@ -1,39 +1,25 @@
 import pandas as pd
-import numpy as np
 
-# Read the Excel file into a DataFrame
-df = pd.read_excel('input.xlsx')
+# Read the Excel file
+data = pd.read_excel('input.xlsx')
 
-# Define the conditions for each column
-conditions = {
-    'SAP Account': [
-        
-    ],
-    'Entity Group': [3],
-    'Flex Balance': ['PlexRep', 'SAP'],
-    'LINE_REF': ['L2-94'],
-    'ELSE_col': ['A1-1']
-}
+# Apply the conditions to filter the data
+filtered_data = data[
+    (data['line_ref'] == 3) & 
+    (data['entity'] == 'a1-1') & 
+    (data['filter'] == 'l2-100')
+]
 
-# Apply the conditions to the DataFrame
-satisfying_rows = np.ones(len(df), dtype=bool)
+# Check if any records satisfy all the conditions
+if not filtered_data.empty:
+    # Create a new text file
+    with open('output.txt', 'w') as file:
+        # Write the filtered records to the text file
+        file.write(filtered_data.to_string(index=False))
 
-for column, allowed_values in conditions.items():
-    # Get the column values
-    column_values = df[column].values
+        # Alternatively, if you want to write specific columns, you can do:
+        # filtered_data[['col1', 'col2', 'col3']].to_string(index=False)
 
-    # Check if the column values are present in the allowed values
-    satisfying_rows &= np.isin(column_values, allowed_values)
-
-# Filter the DataFrame with satisfying rows
-satisfying_df = df[satisfying_rows]
-
-# Print the satisfying rows
-for row in satisfying_df.itertuples(index=False):
-    # Extract the row values (excluding the index)
-    row_values = row[1:]
-    print(f"Row: {row_values} satisfies the conditions.")
-
-# Print the total count of rows satisfying the conditions
-count = len(satisfying_df)
-print(f"Total count of rows satisfying the conditions: {count}")
+    print("Filtered data has been written to output.txt")
+else:
+    print("No records satisfy the specified conditions.")
