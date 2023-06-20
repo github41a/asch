@@ -1,0 +1,46 @@
+import openpyxl
+
+# Create a new workbook and select the active sheet
+workbook = openpyxl.Workbook()
+sheet = workbook.active
+
+# Define the input statements
+input_statements = [
+    "WHEN (SAP_ACCOUNT IN ('11555063', '12548101')) AND ENTITY GROUP IN (3) THEN (CASE WHEN FLEX_BALANCE_SOURCE IN ('FlexRep', 'SAP') THEN 'L2-94' ELSE 'A1-4.2' END)",
+    "WHEN (SAP_ACCOUNT IN ('11564100', '11564005')) AND ENTITY GROUP IN (3) THEN (CASE WHEN FLEX_BALANCE_SOURCE IN ('FlexRep', 'SAP') THEN 'L2-94' ELSE 'A1-4.1' END)",
+    # Add more WHEN statements here...
+]
+
+# Write the column headers
+sheet['A1'] = 'PRODUCT_NAME'
+sheet['B1'] = 'SAP_ACCOUNT'
+sheet['C1'] = 'FLEX_BALANCE_SOURCE'
+sheet['D1'] = 'LINE_REF'
+sheet['E1'] = 'ELSE'
+sheet['F1'] = 'ENTITY'
+
+# Iterate over the input statements and write to the worksheet
+for row, input_statement in enumerate(input_statements, start=2):
+    # Split the input statement to extract the relevant parts
+    conditions, result = input_statement.split('THEN')
+    conditions = conditions.strip().replace('WHEN', '').strip()
+    result = result.strip().replace('CASE', '').replace('END', '').strip()
+
+    # Extract values from conditions and result
+    product_name = ""  # Set the appropriate value for the product name
+    sap_account = ""  # Set the appropriate value for the SAP account
+    flex_balance_source = ""  # Set the appropriate value for the flex balance source
+    line_ref = ""  # Set the appropriate value for the line reference
+    else_value = result  # Use the result as the "else" value
+    entity = ""  # Set the appropriate value for the entity
+
+    # Write the values to the worksheet
+    sheet.cell(row=row, column=1, value=product_name)
+    sheet.cell(row=row, column=2, value=sap_account)
+    sheet.cell(row=row, column=3, value=flex_balance_source)
+    sheet.cell(row=row, column=4, value=line_ref)
+    sheet.cell(row=row, column=5, value=else_value)
+    sheet.cell(row=row, column=6, value=entity)
+
+# Save the workbook as an .xlsx file
+workbook.save('output.xlsx')
