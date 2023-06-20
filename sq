@@ -1,0 +1,58 @@
+import re
+import pandas as pd
+from openpyxl import load_workbook, Workbook
+
+# Read the SQL file
+with open('your_file.sql', 'r') as file:
+    sql_query = file.read()
+
+# Extract CASE expressions from the SQL query
+case_expressions = re.findall(r'\(CASE.*?END\)', sql_query, flags=re.IGNORECASE | re.DOTALL)
+
+# Create a DataFrame to store the extracted data
+data = []
+for expression in case_expressions:
+    # Process the CASE expression and extract data as needed
+    # Modify this section based on the specific structure of your CASE expressions
+
+    # Extract columns
+    product_name = re.search(r'PRODUCT_NAME IN \((.*?)\)', expression).group(1)
+    sap_account = re.search(r'SAP ACCOUNT IN \((.*?)\)', expression).group(1)
+    flex_balance = re.search(r'FLEX BALANCE SOURCE IN \((.*?)\)', expression).group(1)
+    line_ref = re.search(r'L2-(.*?) ELSE', expression).group(1)
+    result = re.search(r'ELSE (.*?) END', expression).group(1)
+    entity_group = re.search(r'ENTITY GROUP IN \((.*?)\)', expression).group(1)
+
+    data.append([product_name, sap_account, flex_balance, line_ref, result, entity_group])
+
+df = pd.DataFrame(data, columns=['PRODUCT_NAME', 'SAP_ACCOUNT', 'FLEX_BALANCE', 'LINE_REF', 'ELSE', 'ENTITY'])
+
+# Check if the Excel file already exists
+try:
+    workbook = load_workbook('output.xlsx')
+    sheet = workbook.active
+    start_row = sheet.max_row + 1  # Start writing data from the next available row
+except FileNotFoundError:
+    # Create a new Excel workbook
+    workbook = Workbook()
+    sheet = workbook.active
+    start_row = 1
+
+# Write column headers to the Excel sheet if starting from the first row
+if start_row == 1:
+    column_headers = list(df.columns)
+    for col_idx, header in enumerate(column_headers, start=1):
+        sheet.cell(row=start_row, column=col_idx).value = header
+    start_row += 1
+
+# Write data to the Excel sheet
+for row_idx, row in df.iterrows():
+    for col_idx, value in enumerate(row, start=1):
+        sheet.cell(row=start_row + row_idx, column=col_idx).value = value
+
+# Save the workbook as an Excel file if it's a new file
+if start_row == 1:
+    workbook.save('output.xlsx')
+else:
+    # If the file already exists and data is added, save it with the existing data
+    workbook.save('output.xlsx')
