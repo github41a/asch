@@ -1,0 +1,409 @@
+import { Component, Pipe, PipeTransform } from '@angular/core';
+
+
+@Pipe({
+    name: 'highlight'
+  })
+  export class HighlightPipe implements PipeTransform {
+    transform(value: string, searchTerm: string): string {
+        if (!searchTerm || !value) {
+          return value;
+        }
+    
+        const regex = new RegExp(searchTerm, 'gi');
+        return value.replace(regex, match => `<span class="highlight">${match}</span>`);
+    }
+  }
+
+@Component({
+  selector: 'app-table',
+  template: `
+    <div class="overflow-x-auto">
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="search()">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th (click)="sort('name')" class="p-2">Name</th>
+            <th (click)="sort('email')" class="p-2">Email</th>
+            <th (click)="sort('phone')" class="p-2">Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let user of pagedUsers">
+            <td [innerHTML]="user.name | highlight: searchTerm"></td>
+            <td [innerHTML]="user.email | highlight: searchTerm"></td>
+            <td [innerHTML]="user.phone | highlight: searchTerm"></td>
+        </tr>
+
+        </tbody>
+      </table>
+      <div class="dropdown">
+  <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    Actions
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li><a class="dropdown-item" href="#">Copy Table</a></li>
+    <li><a class="dropdown-item" href="#">Export to XLS</a></li>
+    <li><a class="dropdown-item" href="#">Export CSV</a></li>
+  </ul>
+</div>
+</div>
+
+      <div class="pagination">
+  <button class="btn btn-primary btn-sm" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+  <button class="btn btn-primary btn-sm" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+</div>
+
+<div class="show-records">
+    <select id="recordsPerPage" class="btn btn-primary btn-sm" [(ngModel)]="recordsPerPage" (change)="updatePageSize()">
+    <option *ngFor="let option of recordsOptions" [value]="option">{{ option }} Records</option>
+  </select>
+</div>
+
+<div class="go-to-page">
+  <label for="pageInput">Go to Page:</label>
+  <input type="number" id="pageInput" class="btn btn-primary btn-sm" [(ngModel)]="goToPageNumber" min="1" max="{{ totalPages }}" (keyup.enter)="goToPage()" />
+</div>
+
+
+  `,
+  styles: [
+    `
+    .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+
+  .go-to-page {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .go-to-page label {
+    margin-right: 0.5rem;
+  }
+
+  .go-to-page input {
+    width: 4rem;
+    padding: 0.25rem;
+  }
+
+  .go-to-page button {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .show-records {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .show-records select {
+    width: 6rem;
+    padding: 0.25rem;
+  }
+
+  .btn {
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-primary {
+    background-color: #6875f5;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background-color: #4c57d8;
+  }
+
+  .btn-primary:focus {
+    box-shadow: 0 0 0 3px rgba(104, 117, 245, 0.5);
+  }
+
+  .btn-primary:active {
+    background-color: #3039b8;
+  }
+
+  .btn-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .btn-disabled:hover {
+    background-color: #6875f5;
+  }
+
+  .btn-disabled:focus {
+    box-shadow: none;
+  }
+
+  .btn-disabled:active {
+    background-color: #6875f5;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  /* Custom Styles */
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    background-color: #f0f2f5;
+  }
+
+  .search {
+    flex-grow: 1;
+    margin-left: 1rem;
+}
+
+.search input {
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    outline: none;
+    font-size: 1rem;
+}
+
+.search input::placeholder {
+    color: #718096;
+}
+
+.search-icon {
+    margin-right: 0.5rem;
+    color: #a0aec0;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    padding: 0.5rem;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-item {
+    cursor: pointer;
+    padding: 0.25rem 0;
+}
+
+.dropdown-item:hover {
+    color: #6875f5;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.actions button {
+    margin-left: 0.5rem;
+}
+
+
+    `,
+  ],
+  
+})
+
+export class TableComponent {
+    
+  users: { name: string; email: string; phone: string }[] = [
+    { name: 'First Page', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'AAAAA', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'First', email: 'john@example.com', phone: '123-456-7890' },   
+    { name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'ZZZ', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'sinu', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
+    { name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+    { name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
+    // Add more users here
+  ];
+
+  searchTerm: string = '';
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
+  goToPageNumber: number = 1;
+  recordsPerPage: number = 10;
+  recordsOptions: number[] = [10, 20, 50];
+
+  get pagedUsers(): { name: string; email: string; phone: string }[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    return this.filteredUsers.slice(startIndex, endIndex);
+  }
+
+  ngOnInit() {
+    this.calculateTotalPages();
+  }
+
+  sort(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  goToPage(): void {
+    if (this.goToPageNumber >= 1 && this.goToPageNumber <= this.totalPages) {
+      this.currentPage = this.goToPageNumber;
+    }
+  }
+
+
+  calculateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.pageSize);
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  updatePageSize(): void {
+    this.pageSize = this.recordsPerPage;
+    this.calculateTotalPages();
+    this.currentPage = 1;
+  }
+
+  search(): void {
+    this.currentPage = 1;
+    this.calculateTotalPages();
+  }
+  
+
+//   get filteredUsers(): { name: string; email: string; phone: string }[] {
+//     return this.users.filter((user) =>
+//       user.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+//     ).sort((a: { [key: string]: string }, b: { [key: string]: string }) => {
+//         const direction = this.sortDirection === 'asc' ? 1 : -1;
+//         if (a[this.sortColumn] < b[this.sortColumn]) return -1 * direction;
+//         if (a[this.sortColumn] > b[this.sortColumn]) return 1 * direction;
+//         return 0;
+//       });
+//   }
+
+// get filteredUsers(): { name: string; email: string; phone: string }[] {
+//     return this.users.filter(user => {
+//       const searchTermLower = this.searchTerm.toLowerCase();
+//       return (
+//         user.name.toLowerCase().includes(searchTermLower) ||
+//         user.email.toLowerCase().includes(searchTermLower) ||
+//         user.phone.toLowerCase().includes(searchTermLower)
+//       )
+//     });
+//   }
+  
+  get filteredUsers(): { name: string; email: string; phone: string }[] {
+    return this.users.filter((user) =>
+      user.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    ).sort((a: { [key: string]: string }, b: { [key: string]: string }) => {
+        const direction = this.sortDirection === 'asc' ? 1 : -1;
+        if (a[this.sortColumn] < b[this.sortColumn]) return -1 * direction;
+        if (a[this.sortColumn] > b[this.sortColumn]) return 1 * direction;
+        return 0;
+      });
+  }
+}
+
+
+
+---------------------------------------------
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+@Pipe({
+  name: 'highlight'
+})
+export class HighlightPipe implements PipeTransform {
+  constructor(private sanitizer: DomSanitizer) {}
+
+  transform(value: string, searchTerm: string): SafeHtml {
+    if (!searchTerm || !value) {
+      return value;
+    }
+    const regex = new RegExp(searchTerm, 'gi');
+    const highlightedValue = value.replace(regex, match => `<span class="highlight">${match}</span>`);
+    return this.sanitizer.bypassSecurityTrustHtml(highlightedValue);
+  }
+}
+
+
+-----------------------------
