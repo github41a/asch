@@ -1,32 +1,64 @@
-<div class="search-container">
-  <input type="text" placeholder="Search" class="search-input" />
-  <button class="search-button">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-  </button>
-</div>
-.search-container {
-  display: flex;
-  align-items: center;
-  background-color: #f0f2f5;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-}
+downloadCSV(): void {
+    const csvContent = this.convertToCSV(this.pagedUsers);
+    this.downloadFile(csvContent, 'table.csv', 'text/csv');
+  }
+  
+  // downloadImage(): void {
+  //   if (this.table) {
+  //     const tableHtml = this.table.nativeElement.outerHTML;
+  //     const image = new Image();
+  //     const canvas = document.createElement('canvas');
 
-.search-input {
-  flex-grow: 1;
-  margin-right: 0.5rem;
-  border: none;
-  background-color: transparent;
-  outline: none;
-  font-size: 1rem;
-}
+  //     // Wait for the image to load before performing the canvas operations
+  //     image.onload = () => {
+  //       canvas.width = image.width;
+  //       canvas.height = image.height;
 
-.search-button {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
-}
+  //       const context = canvas.getContext('2d');
+  //       if (context) {
+  //         context.drawImage(image, 0, 0);
+
+  //         // Convert the canvas to a data URL and trigger the file download
+  //         canvas.toBlob((blob) => {
+  //           if (blob) {
+  //             const url = URL.createObjectURL(blob);
+  //             const link = document.createElement('a');
+  //             link.href = url;
+  //             link.download = 'table.png';
+  //             link.click();
+  //             URL.revokeObjectURL(url);
+  //           } else {
+  //             console.error('Failed to generate the image blob.');
+  //           }
+  //         }, 'image/png');
+  //       }
+  //     };
+
+  //     image.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(tableHtml)));
+  //   }
+  //}
+
+  convertToCSV(data: any[]): string {
+    const headers = Object.keys(data[0]);
+    const rows = data.map((item) => headers.map((header) => item[header]));
+    const csvArray = [headers.join(',')].concat(rows.map((row) => row.join(',')));
+    return csvArray.join('\n');
+  }
+
+  downloadFile(content: string, fileName: string, mimeType: string): void {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+
+
+
+
+
+
+
