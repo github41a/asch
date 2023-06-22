@@ -1,3 +1,32 @@
- <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-    <path fill-rule="evenodd" d="M14.293 12.293l2.853 2.853a1 1 0 0 1-1.414 1.414l-2.853-2.853a8 8 0 1 1 1.414-1.414zm-5.5-2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" clip-rule="evenodd" />
-  </svg>
+<div class="search-container">
+  <input type="text" placeholder="Search" class="search-input" />
+  <button class="search-button">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  </button>
+</div>
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #f0f2f5;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.search-input {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
