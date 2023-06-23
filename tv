@@ -1,0 +1,40 @@
+ CREATE TABLE Race_partition (
+  Year INT,
+  ra VARCHAR(255),
+  Period VARCHAR(255),
+  Account VARCHAR(255),
+  Scenario VARCHAR(255),
+  Value DECIMAL(18,2),
+  Through VARCHAR(255),
+  SQL VARCHAR(255),
+  Entity VARCHAR(255),
+  loader VARCHAR(255),
+  View VARCHAR(255),
+  ICP VARCHAR(255),
+  Custom1 VARCHAR(255),
+  Custom2 VARCHAR(255),
+  Custom3 VARCHAR(255),
+  Custom4 VARCHAR(255),
+  Custom5 VARCHAR(255),
+  Custom6 VARCHAR(255),
+  Custom7 VARCHAR(255),
+  Custom8 VARCHAR(255),
+  Custom9 VARCHAR(255),
+  Custom10 VARCHAR(255)
+);
+
+INSERT INTO Race_partition (Year, ra, Period, Account, Scenario, Value, Through, SQL, Entity, loader, View, ICP, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7, Custom8, Custom9, Custom10) 
+VALUES (2023, 'Race', 'June', 'Account', 'Scenario1', 1000.00, 'Through', 'SQL', 'Entity', 'loader', 'View', 'ICP', 'Custom1', 'Custom2', 'Custom3', 'Custom4', 'Custom5', 'Custom6', 'Custom7', 'Custom8', 'Custom9', 'Custom10');
+
+#!/bin/bash
+
+# Check if the input file is a .TXT file
+if [[ "$1" != *.TXT ]]; then
+  echo "Error: Invalid file type. This script only works with .TXT files."
+  exit 1
+fi
+
+# Remove headers and semicolons from the input file
+tail -n +2 "$1" | tr -d ';' > "${1%.*}_processed.TXT"
+
+echo "Processing complete. Processed file saved as ${1%.*}_processed.TXT"
