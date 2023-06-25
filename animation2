@@ -1,26 +1,49 @@
-<div class="mb-3">
-  <div class="relative mb-4 flex w-full flex-wrap items-stretch">
-    <input
-      type="search"
-      class="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
-      placeholder="Search"
-      aria-label="Search"
-      aria-describedby="button-addon2" />
-
-    <!--Search icon-->
-    <span
-      class="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-neutral-700 dark:text-neutral-200"
-      id="basic-addon2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        class="h-5 w-5">
-        <path
-          fill-rule="evenodd"
-          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-          clip-rule="evenodd" />
-      </svg>
-    </span>
-  </div>
+<div class="button-container2">
+  <button [class.selected]="buttonText === 'Button 1'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 1')">Button 1</button>
+  <button [class.selected]="buttonText === 'Button 2'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 2')">Button 2</button>
+  <button [class.selected]="buttonText === 'Button 3'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 3')">Button 3</button>
+  <button [class.selected]="buttonText === 'Button 4'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 4')">Button 4</button>
+  <button [class.selected]="buttonText === 'Button 5'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 5')">Button 5</button>
+  <button [class.selected]="buttonText === 'Button 6'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 6')">Button 6</button>
 </div>
+
+<div class="display-container2">
+  <p>{{ buttonText }}</p>
+</div>
+
+------------------
+.button-container2 {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+button.rounded-full {
+  border-radius: 9999px;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #013245;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+button.rounded-full:focus {
+  outline: none;
+}
+
+button.rounded-full:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button.selected {
+  background-color: #0495ce;
+}
+------------------
+ buttonText: string = 'Button 1';
+
+  displayText(button: string) {
+    this.buttonText = button;
+  }
