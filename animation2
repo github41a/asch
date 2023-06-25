@@ -1,49 +1,431 @@
-<div class="button-container2">
-  <button [class.selected]="buttonText === 'Button 1'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 1')">Button 1</button>
-  <button [class.selected]="buttonText === 'Button 2'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 2')">Button 2</button>
-  <button [class.selected]="buttonText === 'Button 3'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 3')">Button 3</button>
-  <button [class.selected]="buttonText === 'Button 4'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 4')">Button 4</button>
-  <button [class.selected]="buttonText === 'Button 5'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 5')">Button 5</button>
-  <button [class.selected]="buttonText === 'Button 6'" class="rounded-full md:w-24 lg:w-32" (click)="displayText('Button 6')">Button 6</button>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Line Chart</h5>
+    <div class="line-area-chart-container">
+      <canvas id="lineAreaChart"></canvas>
+    </div>
+  </div>
 </div>
 
-<div class="display-container2">
-  <p>{{ buttonText }}</p>
+
+<div class="dropdown">
+  <button class="dropdown-toggle" type="button" data-toggle="dropdown">
+    Select Series
+  </button>
+  <div class="dropdown-menu">
+    <div class="search-container">
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="search()" placeholder="Search" class="search" />
+    </div>
+    <div class="series-list">
+      <label *ngFor="let series of filteredSeries" class="series-option">
+        <input type="checkbox" [(ngModel)]="series.checked" [value]="series.value" />{{ series.value }}
+        <div class="series-color"></div>
+      </label>
+    </div>
+  </div>
+</div>
+<div class="selected-series">
+  <p *ngFor="let series of selectedSeries">{{ series }}</p>
 </div>
 
-------------------
-.button-container2 {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+
+
+<div class="dropdown2">
+  <button class="dropdown2-toggle" (click)="toggleDropdown()">Select Options</button>
+  <div class="dropdown2-menu" [class.open]="dropdownOpen">
+    <div class="search-container">
+      <input class="search" type="text" placeholder="Search" [(ngModel)]="searchTerm" (input)="filterOptions()" />
+    </div>
+    <div class="options-list">
+      <label class="option" *ngFor="let option of filteredOptions">
+        <input type="checkbox" [(ngModel)]="option.checked" (change)="toggleOption(option)" />
+        {{ option.value }}
+      </label>
+    </div>
+  </div>
+</div>
+---------------------------------------
+.line-area-chart-container {
+  width: 500px;
+  height: 350px;
+  position: relative;
+  overflow: hidden;
+  perspective: 1000px; /* Adjust the perspective value as needed */
 }
 
-button.rounded-full {
-  border-radius: 9999px;
-  padding: 10px 20px;
-  margin: 0 10px;
-  background-color: #013245;
-  color: #FFFFFF;
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background-color: #3490dc;
+  color: #ffffff;
   border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: background-color 0.3s;
 }
 
-button.rounded-full:focus {
-  outline: none;
+.dropdown-toggle:hover {
+  background-color: #2779bd;
 }
 
-button.rounded-full:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: none;
 }
 
-button.selected {
-  background-color: #0495ce;
+.dropdown.open .dropdown-menu {
+  display: block;
 }
-------------------
- buttonText: string = 'Button 1';
 
-  displayText(button: string) {
-    this.buttonText = button;
+.search-container {
+  margin-bottom: 10px;
+}
+
+.search {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.series-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.series-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.selected-series {
+  margin-top: 20px;
+}
+
+.selected-series p {
+  margin-bottom: 5px;
+}
+
+/* Animation Styles */
+@keyframes chartAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chart-container .line-chart {
+  animation: chartAnimation 0.5s ease-in-out;
+}
+
+
+.dropdown2 {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown2-toggle {
+  background-color: #3490dc;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dropdown2-toggle:hover {
+  background-color: #2779bd;
+}
+
+.dropdown2-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: none;
+}
+
+.dropdown2.open .dropdown-menu {
+  display: block;
+}
+
+.search-container {
+  margin-bottom: 10px;
+}
+
+.search {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.options-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.option input[type="checkbox"] {
+  margin-right: 5px;
+}
+-------------------------
+implements AfterViewInit, OnChanges,OnInit {
+  @Input() data: number[] = [10, 40, 35, 50, 49, 60, 70, 91, 125];
+  @Input() categories: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+
+  selectedSeries: string[] = ['Series 1', 'Series 2', 'Series 3', 'Series 4', 'Series 5',];
+  lineAreaChart: Chart<'line'> | null = null;
+  radialGradientChart: Chart | null = null;
+  lineAreaChartCanvas: HTMLCanvasElement | null = null;
+  radialGradientChartCanvas: HTMLCanvasElement | null = null;
+  
+
+  allSeries: string[] = ['Series 1', 'Series 2', 'Series 3', 'Series 4', 'Series 5', 'Series 6'];
+  filteredSeries: { value: string, checked: boolean }[] = [];
+    searchTerm: string = '';
+
+
+  constructor(private elementRef: ElementRef) {}
+  ngOnInit() {
+    // Initialize filteredSeries with allSeries
+    this.filteredSeries = this.allSeries.map(series => ({ value: series, checked: false }));
+  }
+
+  search() {
+    // Filter the series based on the search term
+    const term = this.searchTerm.toLowerCase();
+    this.filteredSeries = this.allSeries
+      .filter(series => series.toLowerCase().includes(term))
+      .map(series => ({ value: series, checked: false }));
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    if ((changes['selectedSeries'] || changes['data']) && this.lineAreaChart) {
+      this.updateLineAreaChart();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.lineAreaChartCanvas = this.elementRef.nativeElement.querySelector('#lineAreaChart');
+    this.radialGradientChartCanvas = this.elementRef.nativeElement.querySelector('#radialGradientChart');
+
+    this.renderLineAreaChart();
+  }
+
+  renderLineAreaChart() {
+    const lineAreaChartOptions = {
+      type: 'line',
+      data: {
+        labels: this.categories,
+        datasets: this.getDatasets(this.selectedSeries)
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: true
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              usePointStyle: false,
+              font: {
+                family: 'Arial, sans-serif',
+                size: 12
+              },
+              color: 'text-black-700'
+            }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(255,255,255,0.8)',
+            borderColor: 'rgba(0,0,0,0.1)',
+            borderWidth: 1,
+            titleFont: {
+              family: 'Arial, sans-serif',
+              size: 14,
+              weight: 'bold',
+              color: 'text-black-900'
+            },
+            bodyFont: {
+              family: 'Arial, sans-serif',
+              size: 12,
+              weight: 'normal',
+              color: 'text-black-700'
+            }
+          }
+        }
+      }
+    };
+  
+    if (this.lineAreaChartCanvas) {
+      if (this.lineAreaChartCanvas) {
+        this.lineAreaChart = new Chart(this.lineAreaChartCanvas.getContext('2d')!, lineAreaChartOptions as any);
+      }
+          }
+  }
+    
+ 
+  updateLineAreaChart() {
+    if (this.lineAreaChart) {
+      this.lineAreaChart.data.datasets = this.getDatasets(this.selectedSeries) as ChartDataset<'line', (number | Point | null)[]>[];
+      this.lineAreaChart.update();
+    }
+  }
+
+  onSeriesSelect() {
+    this.updateLineAreaChart();
+  }
+  
+ 
+  
+  // getDatasets(selectedSeries: string[]): ChartDataset<'line', (number | Point | null)[]>[] {
+  //   const datasets: ChartDataset<'line', (number | Point | null)[]>[] = [];
+
+  //   selectedSeries.forEach((seriesName) => {
+  //     if (seriesName === 'Series 1') {
+  //       datasets.push({
+  //         label: 'Series 1',
+  //         data: this.data,
+  //         fill: true,
+  //         backgroundColor: 'rgba(0, 123, 255, 0.3)',
+  //         borderColor: 'rgba(0, 123, 255, 1)',
+  //         borderWidth: 1
+  //       });
+  //     } else if (seriesName === 'Series 2') {
+  //       datasets.push({
+  //         label: 'Series 2',
+  //         data: [20, 60, 45, 80, 65, 75, 95, 110, 140],
+  //         fill: true,
+  //         backgroundColor: 'rgba(255, 0, 0, 0.3)',
+  //         borderColor: 'rgba(255, 0, 0, 1)',
+  //         borderWidth: 1
+  //       });
+  //     } else if (seriesName === 'Series 3') {
+  //       datasets.push({
+  //         label: 'Series 3',
+  //         data: [50, 30, 70, 90, 40, 55, 85, 100, 120],
+  //         fill: true,
+  //         backgroundColor: 'rgba(0, 255, 0, 0.3)',
+  //         borderColor: 'rgba(0, 255, 0, 1)',
+  //         borderWidth: 1
+  //       });
+  //     }
+  //   });
+
+  getDatasets(
+    selectedSeries: string[]
+  ): ChartDataset<'line', (number | Point | null)[]>[] {
+    const datasets: ChartDataset<'line', (number | Point | null)[]>[] = [];
+  
+    selectedSeries.forEach((seriesName) => {
+      if (seriesName === 'Series 1') {
+        datasets.push({
+          label: 'Series 1',
+          data: this.data,
+          fill: true,
+          backgroundColor: 'rgba(0, 123, 255, 0.1)',
+          borderColor: 'rgba(0, 123, 255, 0.8)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+        });
+      } else if (seriesName === 'Series 2') {
+        datasets.push({
+          label: 'Series 2',
+          data: [20, 60, 45, 80, 65, 75, 95, 110, 140],
+          fill: true,
+          backgroundColor: 'rgba(255, 0, 0, 0.1)',
+          borderColor: 'rgba(255, 0, 0, 0.8)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+        });
+      } else if (seriesName === 'Series 3') {
+        datasets.push({
+          label: 'Series 3',
+          data: [50, 30, 70, 90, 40, 55, 85, 100, 120],
+          fill: true,
+          backgroundColor: 'rgba(0, 255, 0, 0.1)',
+          borderColor: 'rgba(0, 255, 0, 0.8)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+        });
+      }
+    });
+  
+    return datasets;
+  }
+
+  dropdownOpen = false;
+  options = [
+    { value: 'Option 1', checked: false },
+    { value: 'Option 2', checked: false },
+    { value: 'Option 3', checked: false },
+    { value: 'Option 4', checked: false },
+    { value: 'Option 5', checked: false }
+  ];
+  filteredOptions = [...this.options];
+  // searchTerm = '';
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+    if (!this.dropdownOpen) {
+      this.filterOptions();
+    }
+  }
+
+  filterOptions() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredOptions = this.options.filter(option =>
+      option.value.toLowerCase().includes(term)
+    );
+  }
+
+  toggleOption(option: any) {
+    option.checked = !option.checked;
   }
