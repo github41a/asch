@@ -1,0 +1,199 @@
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Chart,ChartConfiguration, registerables } from 'chart.js';
+import * as XLSX from 'xlsx';
+
+
+@Component({
+  selector: 'app-line-area-chart',
+  templateUrl: './line-area-chart.component.html',
+  styleUrls: ['./line-area-chart.component.css']
+})
+export class LineAreaChartComponent implements AfterViewInit {
+  @ViewChild('radialGradientChart', { static: false }) chartCanvas!: ElementRef;
+
+  selectedOption: string = 'option1'; // Default selected option
+  chartInstance: Chart<'doughnut', number[], string> | null = null;
+  
+
+  ngAfterViewInit(): void {
+    // Register the necessary Chart.js components
+    Chart.register(...registerables);
+
+    const canvas = this.chartCanvas.nativeElement as HTMLCanvasElement;
+
+    this.createRadialGradientChart(canvas);
+  }
+
+  createRadialGradientChart(canvas: HTMLCanvasElement): void {
+    const ctx = canvas.getContext('2d')!; // Use non-null assertion operator (!)
+
+    let data: number[] = [];
+    let gradientColors: { offset: number; color: string }[] = [];
+
+    if (this.selectedOption === 'option1') {
+      data = [40, 60];
+      gradientColors = [
+        { offset: 0, color: '#00264D' }, // Red
+        { offset: 1, color: '#0052A2' }, // Yellow
+      ];
+    } else if (this.selectedOption === 'option2') {
+      data = [90, 10];
+      gradientColors = [
+        { offset: 0, color: '#00FF00' }, // Green
+        { offset: 1, color: '#FFC0CB' }, // Pink
+      ];
+    }
+
+    const createGradient = (ctx: CanvasRenderingContext2D) => {
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradientColors.forEach(({ offset, color }) => {
+        gradient.addColorStop(offset, color);
+      });
+      return gradient;
+    };
+
+    // Destroy existing Chart instance if it exists
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    this.chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['CI', 'IC'],
+        datasets: [
+          {
+            data: data,
+            backgroundColor: createGradient(ctx),
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        cutout: '70%', // Adjust the size of the inner circle
+      },
+      elements: {
+        arc: {
+          borderWidth: 0, // Set border width to 0 for a smooth circle effect
+        },
+      },
+    } as ChartConfiguration<'doughnut', number[], string>);
+  }
+  downloadImage(): void {
+    const canvas = this.chartCanvas.nativeElement as HTMLCanvasElement;
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'chart.png';
+    link.click();
+  }
+  downloadExcel(): void {
+    const data = [
+      { label: 'CI', value: this.chartInstance?.data.datasets[0].data[0] },
+      { label: 'IC', value: this.chartInstance?.data.datasets[0].data[1] }
+    ];
+  
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'data.xlsx';
+    link.click();
+  }
+  
+}
+
+
+-----------------------------
+<div class="bg-gray-200 min-h-screen flex items-center justify-center">
+  <div class="card mx-auto w-72 shadow-lg">
+    <div class="card-body bg-black p-4">
+      <div class="dropdown-container">
+        <div class="dropdown-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </div>
+        <select [(ngModel)]="selectedOption" (ngModelChange)="createRadialGradientChart(chartCanvas.nativeElement)" class="dropdown-select">
+          <option value="option1">Option 1</option>
+          <option value="option2">Option 2</option>
+        </select>
+      </div>
+
+      <canvas #radialGradientChart class="chart-canvas"></canvas>
+
+      <div class="dropdown-container-download">
+        <div class="dropdown">
+          <button class="dropdown-toggle" type="button" id="downloadDropdown" data-toggle="collapse" data-target="#downloadOptions" aria-haspopup="true" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+          <div class="dropdown-menu collapse" id="downloadOptions" aria-labelledby="downloadDropdown">
+            <button class="dropdown-item" (click)="downloadImage()">Download Image</button>
+            <button class="dropdown-item" (click)="downloadExcel()">Download Excel</button>
+          </div>
+        </div>
+      </div>
+</div>
+-----------------------------------
+:host {
+  display: block;
+}
+
+h3 {
+  text-align: center;
+}
+
+canvas {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+.dropdown-container{
+  position: relative;
+  display: inline-flex;
+}
+.dropdown-container-download{
+  position: relative;
+  display: inline-flex;
+}
+.dropdown-select {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border-radius: 0.25rem;
+  line-height: 1.25rem;
+  outline: none;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.dropdown-icon {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  color: #4a5568;
+}
+
+.dropdown-icon svg {
+  fill: currentColor;
+  width: 1rem;
+  height: 1rem;
+}
+.chart-canvas.segment-clicked {
+  transition: transform 0.2s ease-in-out;
+}
+
+.chart-canvas.segment-clicked:hover {
+  transform: scale(1.05);
+}
+
