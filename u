@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Variables
+REGSH="/path/to/regsh"
+REG_LOGIN="username/password"
+
+# File paths
+data_file=$(ls /apps/axiom_App/inbound/gsib/inflight/race/BCEPROCESSED_*.txt)
+control_file="axiom_gsib_race_load.ctl"
+
+# Generate log file name
+log_file="load_data_$(date +'%Y%m%d%H%M%S').log"
+
+# Run SQL*Loader
+sqlldr USERID=$REG_LOGIN control=$control_file data=$data_file log=$log_file
+
+# Check the return code
+if [ $? -eq 0 ]; then
+  echo "Data loaded successfully."
+  $REGSH/axiom_batch_logging.sh load_data.sh "Data loaded successfully."
+else
+  echo "Data load failed."
+  $REGSH/axiom_batch_logging.sh load_data.sh "Data load failed."
+fi
