@@ -1,147 +1,280 @@
-import { Component, AfterViewInit, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import * as ApexCharts from 'apexcharts';
-import { ApexChart } from 'ngx-apexcharts';
+export class LineAreaChartComponent implements OnInit {
+  searchQuery: string = '';
+  selectAll: boolean = false;
 
-export class LineAreaChartComponent implements AfterViewInit, OnChanges {
-  @Input() data: number[] = [10, 40, 35, 50, 49, 60, 70, 91, 125];
-  @Input() categories: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+  filteredDatasets: any[] = [];
+  stackedChart!: Chart;
+  datasetVisibility: boolean[] = []; // Initialize datasetVisibility as an empty array
 
-  selectedSeries: string[] = ['Series 1', 'Series 2', 'Series 3']; // Array to store selected series
-  lineAreaChart: ApexCharts | null = null;
-  radialGradientChart: ApexCharts | null = null;
-
-  constructor(private elementRef: ElementRef) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    if ((changes['selectedSeries'] || changes['data']) && this.lineAreaChart) {
-      this.lineAreaChart.updateOptions({
-        series: this.getSeriesData(this.selectedSeries)
-      });
-    }
-  }
-  
-
-  ngAfterViewInit() {
-    this.renderChart();
-    this.renderRadialGradientChart();
+  constructor() {
+    this.datasetVisibility = []; // Initialize the datasetVisibility array
   }
 
-  renderChart() {
-    const lineAreaChartOptions = {
-      series: this.getSeriesData(this.selectedSeries),
-      chart: {
-        type: 'area',
-        height: 350,
-        width: 500,
-      },
-      xaxis: {
-        categories: this.categories,
-      },
-      dataLabels: {
-        enabled: false,
-      },
-    };
-    this.lineAreaChart = new ApexCharts(this.elementRef.nativeElement.querySelector('#lineAreaChart'), lineAreaChartOptions);
-    this.lineAreaChart.render();
+  isDropdownClosed: boolean = true;
+
+  toggleDropdown(): void {
+    this.isDropdownClosed = !this.isDropdownClosed;
   }
 
-  renderRadialGradientChart() {
-    const radialGradientChartOptions = {
-      series: [75], // Change the value to match your data
-      chart: {
-        type: 'radialBar',
-        height: 350,
-        width: 500,
+  closeDropdown(): void {
+    this.isDropdownClosed = true;
+  }
+
+  ngOnInit(): void {
+    // Define chart data
+    const chartData: ChartDataset[] = [
+      {
+        label: 'Dataset 1',
+        data: [10, 20, 30, 40],
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
       },
-      plotOptions: {
-        radialBar: {
-          hollow: {
-            size: '70%',
+      {
+        label: 'Dataset 2',
+        data: [5, 15, 25, 35],
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Dataset 3',
+        data: [15, 25, 35, 45],
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Dataset 4',
+        data: [15, 25, 35, 45],
+        backgroundColor: 'rgba(54, 162, 260, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        hidden: true, // Initially hidden
+      },
+      {
+        label: 'Dataset 5',
+        data: [15, 25, 35, 45],
+        backgroundColor: 'rgba(54, 162, 405, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        hidden: true, // Initially hidden
+      },
+      {
+        label: 'Dataset 6',
+        data: [15, 25, 35, 45],
+        backgroundColor: 'rgba(84, 232, 405, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        hidden: true, // Initially hidden
+      },
+      {
+        label: 'Dataset 7',
+        data: [15, 25, 35, 45],
+        backgroundColor: 'rgba(84, 232, 405, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        hidden: true, // Initially hidden
+      },
+    ];
+
+    // Initialize datasetVisibility array based on the default visibility
+    this.datasetVisibility = chartData.map((dataset, index) => index < 1);
+
+    const chartOptions: ChartOptions = {
+      scales: {
+        x: {
+          stacked: true,
+          title: {
+            display: false,
+            text: 'X-Axis Title',
           },
-          track: {
-            background: {
-              radialGradient: {
-                cx: '50%',
-                cy: '50%',
-                r: '42%',
-                gradientUnits: 'userSpaceOnUse',
-              },
-              stops: [
-                { offset: 0, color: '#FFB64D' },
-                { offset: 1, color: '#FF721A' },
-              ],
-            },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
           },
-          dataLabels: {
-            name: {
-              offsetY: -10,
-              color: '#888',
-              fontSize: '13px',
-            },
-            value: {
-              color: '#111',
-              fontSize: '30px',
-              show: true,
-            }
+          grid: {
+            display: false, // Hide the x-axis grid lines
+          },
+        },
+        y: {
+          stacked: true,
+          title: {
+            display: false,
+            text: 'Y-Axis Title',
+          },
+          grid: {
+            display: false, // Hide the y-axis grid lines
           },
         },
       },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Key Driving Cost',
+          padding: {
+            top: 10,
+            bottom: 30,
+          },
+        },
+        legend: {
+          display: false,
+          position: 'right',
+        },
+      },
     };
-    this.radialGradientChart = new ApexCharts(this.elementRef.nativeElement.querySelector('#radialGradientChart'), radialGradientChartOptions);
-    this.radialGradientChart.render();
+    const ctx = document.getElementById('stackedChart') as HTMLCanvasElement;
+    this.stackedChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['February 23', 'March 23'],
+        datasets: chartData,
+      },
+      options: chartOptions,
+    });
   }
 
-  onSeriesSelect() {
-    if (this.lineAreaChart) {
-      this.lineAreaChart.updateOptions({
-        series: this.getSeriesData(this.selectedSeries)
-      });
-    }
-  }
-
-  getSeriesData(selectedSeries: string[]): any[] {
-    const seriesData: any[] = [];
-
-    selectedSeries.forEach((seriesName) => {
-      if (seriesName === 'Series 1') {
-        seriesData.push({
-          name: 'Series 1',
-          data: this.data,
-        });
-      } else if (seriesName === 'Series 2') {
-        seriesData.push({
-          name: 'Series 2',
-          data: [20, 60, 45, 80, 65, 75, 95, 110, 140],
-        });
-      } else if (seriesName === 'Series 3') {
-        seriesData.push({
-          name: 'Series 3',
-          data: [50, 30, 70, 90, 40, 55, 85, 100, 120],
-        });
+  updateChart(): void {
+    const datasets = this.stackedChart.data.datasets;
+    datasets.forEach((dataset, index) => {
+      if (index >= 0) {
+        dataset.hidden = !this.datasetVisibility[index];
       }
     });
+    this.stackedChart.update();
+  }
+  toggleDatasetVisibility(index: number): void {
+    if (index < 3) {
+      this.datasetVisibility[index] = !this.datasetVisibility[index];
+      this.stackedChart.data.datasets[index].hidden =
+        !this.stackedChart.data.datasets[index].hidden;
+      this.stackedChart.update();
+    } else {
+      this.datasetVisibility[index] = !this.datasetVisibility[index];
+      this.stackedChart.data.datasets[index].hidden =
+        !this.stackedChart.data.datasets[index].hidden;
+      this.stackedChart.update();
+    }
+  }
+  // Function to filter datasets based on search query
+  filterDatasets(): void {
+    this.filteredDatasets = this.stackedChart.data.datasets.filter(
+      (dataset) => {
+        return (
+          dataset.label &&
+          dataset.label.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      }
+    );
+  }
 
-    return seriesData;
+  // Call the filterDatasets() function whenever the search query changes
+  updateSearch() {
+    this.filterDatasets();
+  }
+
+  toggleAll(event: Event): void {
+    event.stopPropagation();
+    this.selectAll = !this.selectAll;
+    this.datasetVisibility = this.filteredDatasets.map(() => this.selectAll);
+    this.updateChart();
   }
 }
+---------------------------------------------------------------------------------------------------------------------------------------
 
--------------------------------------------------------------------
-<!-- <div>
-    <select [(ngModel)]="selectedSeries" (change)="onSeriesSelect()">
-      <option value="Series 1">Series 1</option>
-      <option value="Series 2">Series 2</option>
-      <option value="Series 3">Series 3</option>
-    </select>
-  </div> -->
-  <div id="lineAreaChart"></div>
-  <div id="radialGradientChart"></div>
+<div class="absolute" [ngClass]="{ 'open': !isDropdownClosed }">
+  <!-- <button
+    class="relative z-10 block w-48 justify-equally bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg focus:outline-none"
+    (click)="toggleDropdown()"> -->
+    <div class="chart-container fixed">
+      <canvas id="stackedChart"></canvas>
+   
+    <button
+    class="absolute top-0 right-0 mt-2 w-48 bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg"
+    (click)="toggleDropdown()">
+    <span class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer">
+      <span>Select</span>
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+        <path [ngClass]="{ 'hidden': !isDropdownClosed, 'inline-flex': isDropdownClosed }" class="fill-current"
+          d="M7 7l3-3 3 3H7z" />
+        <path [ngClass]="{ 'hidden': isDropdownClosed, 'inline-flex': !isDropdownClosed }" class="fill-current"
+          d="M7 13l3 3 3-3H7z" />
+      </svg>
+    </span>
+  </button>
+  <div
+    class="absolute top-9 right-0 mt-2 w-48 bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg focus:outline-none"
+    [ngClass]="{ 'hidden': isDropdownClosed }">
+    <div class="search-container">
+      <input type="text" class="form-input w-full px-4 py-2 text-sm text-gray-700" placeholder="Search"
+        [(ngModel)]="searchQuery" (input)="updateSearch()">
+    </div>
+    <ng-container *ngIf="searchQuery && filteredDatasets.length === 0">
+      <div class="px-4 py-2 text-sm text-gray-700">No Records Found</div>
+    </ng-container>
+    <ng-container *ngIf="filteredDatasets.length > 0">
+      <div class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
+        (click)="toggleAll($event)">
+        <input type="checkbox" class="form-checkbox" [(ngModel)]="selectAll">
+        <span>Select All</span>
+      </div>
+      <label class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
+        *ngFor="let dataset of filteredDatasets; let i = index">
+        <input type="checkbox" class="form-checkbox" [(ngModel)]="datasetVisibility[i]" (change)="updateChart()">
+        <span class="checkmark" [style.backgroundColor]="dataset.backgroundColor"></span>
+        <span [class.checked]="datasetVisibility[i]">{{ dataset.label }}</span>
+      </label>
 
-  --------------------------------------------
-#lineAreaChart {
-  width: 400px;
-  height: 300px;
-  margin: 20px;
-}
-#radialGradientChart {
-  background-color: #F3F3F3; /* Replace with a different color if needed */
-}
+    </ng-container>
+  </div>
+</div>
+----------------------------------------------------------------------------------------------------------
+.chart-container {
+    position: fixed;
+    width: 60%;
+    height: 400px; /* Adjust the height as needed */
+  }
+  
+  .relative.dropdown {
+    display: inline-block;
+  }
+  
+  .relative.dropdown input[type="text"] {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 220px;
+  }
+  
+  .dropdown-menu li {
+    margin-bottom: 5px;
+  }
+  
+  .dropdown-menu label {
+    display: inline-block;
+    margin-left: 5px;
+  }
+  
+  .dropdown .open .dropdown-menu {
+    display: block;
+  }
+  .checkmark {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 8px;
+  }
+  
