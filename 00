@@ -1,280 +1,65 @@
-export class LineAreaChartComponent implements OnInit {
-  searchQuery: string = '';
-  selectAll: boolean = false;
+#!/bin/bash
 
-  filteredDatasets: any[] = [];
-  stackedChart!: Chart;
-  datasetVisibility: boolean[] = []; // Initialize datasetVisibility as an empty array
+generate_log() {
+    local filename="$1"
+    local log_dir="$2"
 
-  constructor() {
-    this.datasetVisibility = []; // Initialize the datasetVisibility array
-  }
+    # Create the log directory if it doesn't exist
+    mkdir -p "$log_dir"
 
-  isDropdownClosed: boolean = true;
-
-  toggleDropdown(): void {
-    this.isDropdownClosed = !this.isDropdownClosed;
-  }
-
-  closeDropdown(): void {
-    this.isDropdownClosed = true;
-  }
-
-  ngOnInit(): void {
-    // Define chart data
-    const chartData: ChartDataset[] = [
-      {
-        label: 'Dataset 1',
-        data: [10, 20, 30, 40],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Dataset 2',
-        data: [5, 15, 25, 35],
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Dataset 3',
-        data: [15, 25, 35, 45],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Dataset 4',
-        data: [15, 25, 35, 45],
-        backgroundColor: 'rgba(54, 162, 260, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        hidden: true, // Initially hidden
-      },
-      {
-        label: 'Dataset 5',
-        data: [15, 25, 35, 45],
-        backgroundColor: 'rgba(54, 162, 405, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        hidden: true, // Initially hidden
-      },
-      {
-        label: 'Dataset 6',
-        data: [15, 25, 35, 45],
-        backgroundColor: 'rgba(84, 232, 405, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        hidden: true, // Initially hidden
-      },
-      {
-        label: 'Dataset 7',
-        data: [15, 25, 35, 45],
-        backgroundColor: 'rgba(84, 232, 405, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        hidden: true, // Initially hidden
-      },
-    ];
-
-    // Initialize datasetVisibility array based on the default visibility
-    this.datasetVisibility = chartData.map((dataset, index) => index < 1);
-
-    const chartOptions: ChartOptions = {
-      scales: {
-        x: {
-          stacked: true,
-          title: {
-            display: false,
-            text: 'X-Axis Title',
-          },
-          ticks: {
-            autoSkip: false,
-            maxRotation: 0,
-          },
-          grid: {
-            display: false, // Hide the x-axis grid lines
-          },
-        },
-        y: {
-          stacked: true,
-          title: {
-            display: false,
-            text: 'Y-Axis Title',
-          },
-          grid: {
-            display: false, // Hide the y-axis grid lines
-          },
-        },
-      },
-      plugins: {
-        title: {
-          display: true,
-          text: 'Key Driving Cost',
-          padding: {
-            top: 10,
-            bottom: 30,
-          },
-        },
-        legend: {
-          display: false,
-          position: 'right',
-        },
-      },
-    };
-    const ctx = document.getElementById('stackedChart') as HTMLCanvasElement;
-    this.stackedChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['February 23', 'March 23'],
-        datasets: chartData,
-      },
-      options: chartOptions,
-    });
-  }
-
-  updateChart(): void {
-    const datasets = this.stackedChart.data.datasets;
-    datasets.forEach((dataset, index) => {
-      if (index >= 0) {
-        dataset.hidden = !this.datasetVisibility[index];
-      }
-    });
-    this.stackedChart.update();
-  }
-  toggleDatasetVisibility(index: number): void {
-    if (index < 3) {
-      this.datasetVisibility[index] = !this.datasetVisibility[index];
-      this.stackedChart.data.datasets[index].hidden =
-        !this.stackedChart.data.datasets[index].hidden;
-      this.stackedChart.update();
-    } else {
-      this.datasetVisibility[index] = !this.datasetVisibility[index];
-      this.stackedChart.data.datasets[index].hidden =
-        !this.stackedChart.data.datasets[index].hidden;
-      this.stackedChart.update();
-    }
-  }
-  // Function to filter datasets based on search query
-  filterDatasets(): void {
-    this.filteredDatasets = this.stackedChart.data.datasets.filter(
-      (dataset) => {
-        return (
-          dataset.label &&
-          dataset.label.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-    );
-  }
-
-  // Call the filterDatasets() function whenever the search query changes
-  updateSearch() {
-    this.filterDatasets();
-  }
-
-  toggleAll(event: Event): void {
-    event.stopPropagation();
-    this.selectAll = !this.selectAll;
-    this.datasetVisibility = this.filteredDatasets.map(() => this.selectAll);
-    this.updateChart();
-  }
+    echo "Generating log file..."
+    echo "Number of records in $filename: $(wc -l < "$filename")" > "${log_dir}/${filename##*/}.log"
 }
----------------------------------------------------------------------------------------------------------------------------------------
 
-<div class="absolute" [ngClass]="{ 'open': !isDropdownClosed }">
-  <!-- <button
-    class="relative z-10 block w-48 justify-equally bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg focus:outline-none"
-    (click)="toggleDropdown()"> -->
-    <div class="chart-container fixed">
-      <canvas id="stackedChart"></canvas>
-   
-    <button
-    class="absolute top-0 right-0 mt-2 w-48 bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg"
-    (click)="toggleDropdown()">
-    <span class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer">
-      <span>Select</span>
-      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-        <path [ngClass]="{ 'hidden': !isDropdownClosed, 'inline-flex': isDropdownClosed }" class="fill-current"
-          d="M7 7l3-3 3 3H7z" />
-        <path [ngClass]="{ 'hidden': isDropdownClosed, 'inline-flex': !isDropdownClosed }" class="fill-current"
-          d="M7 13l3 3 3-3H7z" />
-      </svg>
-    </span>
-  </button>
-  <div
-    class="absolute top-9 right-0 mt-2 w-48 bg-white border border-gray-300 divide-y divide-gray-200 rounded-md shadow-lg focus:outline-none"
-    [ngClass]="{ 'hidden': isDropdownClosed }">
-    <div class="search-container">
-      <input type="text" class="form-input w-full px-4 py-2 text-sm text-gray-700" placeholder="Search"
-        [(ngModel)]="searchQuery" (input)="updateSearch()">
-    </div>
-    <ng-container *ngIf="searchQuery && filteredDatasets.length === 0">
-      <div class="px-4 py-2 text-sm text-gray-700">No Records Found</div>
-    </ng-container>
-    <ng-container *ngIf="filteredDatasets.length > 0">
-      <div class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
-        (click)="toggleAll($event)">
-        <input type="checkbox" class="form-checkbox" [(ngModel)]="selectAll">
-        <span>Select All</span>
-      </div>
-      <label class="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
-        *ngFor="let dataset of filteredDatasets; let i = index">
-        <input type="checkbox" class="form-checkbox" [(ngModel)]="datasetVisibility[i]" (change)="updateChart()">
-        <span class="checkmark" [style.backgroundColor]="dataset.backgroundColor"></span>
-        <span [class.checked]="datasetVisibility[i]">{{ dataset.label }}</span>
-      </label>
+generate_dat() {
+    local filename="$1"
+    local dat_dir="$2"
 
-    </ng-container>
-  </div>
-</div>
-----------------------------------------------------------------------------------------------------------
-.chart-container {
-    position: fixed;
-    width: 60%;
-    height: 400px; /* Adjust the height as needed */
-  }
-  
-  .relative.dropdown {
-    display: inline-block;
-  }
-  
-  .relative.dropdown input[type="text"] {
-    width: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    width: 220px;
-  }
-  
-  .dropdown-menu li {
-    margin-bottom: 5px;
-  }
-  
-  .dropdown-menu label {
-    display: inline-block;
-    margin-left: 5px;
-  }
-  
-  .dropdown .open .dropdown-menu {
-    display: block;
-  }
-  .checkmark {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    margin-right: 8px;
-  }
-  
+    # Create the dat directory if it doesn't exist
+    mkdir -p "$dat_dir"
+
+    echo "Generating dat file..."
+    md5sum "$filename" > "${dat_dir}/${filename##*/}.dat"
+}
+
+compare_files() {
+    local filename="$1"
+    local comparefile="$2"
+
+    if cmp -s "$filename" "$comparefile"; then
+        echo "Number of records in $filename and $comparefile are the same"
+    else
+        echo "Number of records in $filename and $comparefile are different"
+    fi
+
+    if md5sum -c "${filename%.*}.dat" "$comparefile" >/dev/null; then
+        echo "Checksums of $filename and $comparefile match"
+    else
+        echo "Checksums of $filename and $comparefile do not match"
+    fi
+}
+
+# Define the paths of the original file and the file you want to compare with
+original_file="/path/to/original_file.txt"
+compare_file="/path/to/compare_file.txt"
+
+# Define the directory paths for log and dat files
+log_dir="/path/to/logs"
+dat_dir="/path/to/dats"
+
+# Input validation: Check if the specified original file exists
+if [[ ! -f "$original_file" ]]; then
+    echo "Error: The file '$original_file' does not exist."
+    exit 1
+fi
+
+generate_log "$original_file" "$log_dir"
+generate_dat "$original_file" "$dat_dir"
+
+# Input validation: Check if the specified compare file exists
+if [[ ! -f "$compare_file" ]]; then
+    echo "Error: The file '$compare_file' does not exist."
+    exit 1
+fi
+
+compare_files "$original_file" "$compare_file"
