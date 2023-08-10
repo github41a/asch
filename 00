@@ -6,3 +6,26 @@ df = pd.read_excel(path, dtype=object)
 vcond = df[df.duplicated(subset=['your_column_name'], keep=False)].groupby('your_column_name').head(1)
 sum_result = vcond['your_column_to_sum'].sum()
 print("Sum of filtered records:", sum_result)
+
+
+
+import pandas as pd
+
+path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
+df = pd.read_excel(path, dtype=object)
+
+vcond = df[df.duplicated(subset=['reverser_ratecolumn'], keep=False)].groupby('reverser_ratecolumn').head(1)
+sum_result = vcond['reverser_ratecolumn'].astype(float).sum()  # Assuming the column contains numeric values
+print("Sum of filtered records:", sum_result)
+
+
+
+import pandas as pd
+
+path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
+df = pd.read_excel(path, dtype=object)
+
+sum_result = df[df.duplicated(subset=['reverser_ratecolumn'], keep=False)]['reverser_ratecolumn'].astype(float).sum()
+
+print("Sum of filtered records:", sum_result)
+
