@@ -1,31 +1,20 @@
-import pandas as pd
-
-path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
-df = pd.read_excel(path, dtype=object)
-
-vcond = df[df.duplicated(subset=['your_column_name'], keep=False)].groupby('your_column_name').head(1)
-sum_result = vcond['your_column_to_sum'].sum()
-print("Sum of filtered records:", sum_result)
-
-
-
-import pandas as pd
-
-path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
-df = pd.read_excel(path, dtype=object)
-
-vcond = df[df.duplicated(subset=['reverser_ratecolumn'], keep=False)].groupby('reverser_ratecolumn').head(1)
-sum_result = vcond['reverser_ratecolumn'].astype(float).sum()  # Assuming the column contains numeric values
-print("Sum of filtered records:", sum_result)
-
-
-
-import pandas as pd
-
-path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
-df = pd.read_excel(path, dtype=object)
-
-sum_result = df[df.duplicated(subset=['reverser_ratecolumn'], keep=False)]['reverser_ratecolumn'].astype(float).sum()
-
-print("Sum of filtered records:", sum_result)
-
+LOAD INTO ds_race_data_Stg_new
+(
+  SR_NO,
+  SU_CODE,
+  BCE_ACCOUNT,
+  AMOUNT,
+  "LINE REF",
+  mapped_unmapped
+)
+SELECT
+  ROW_NUMBER() OVER (ORDER BY R.BCE_ACCOUNT) AS SR_NO,
+  SUBSTR(R.entity, 1, 5) AS SU_CODE,
+  R.BCE_ACCOUNT,
+  R.AMOUNT,
+  NVL((SELECT g.LINE_REF FROM GSIB_RACE_GL_MAPPING g WHERE g.product_name = 'RACE' AND g.BCE_ACCOUNTER = R.BCE_ACCOUNT AND g.end_date IS NULL), 0) AS "LINE REF",
+  CASE
+    WHEN EXISTS (SELECT 1 FROM GSIB_RACE_GL_MAPPING WHERE product_name = 'RACE' AND BCE_ACCOUNTER = R.BCE_ACCOUNT AND end_date IS NULL) THEN 'Mapped'
+    ELSE 'Unmapped'
+  END AS mapped_unmapped
+FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE_R R;
