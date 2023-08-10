@@ -1,65 +1,8 @@
-#!/bin/bash
+import pandas as pd
 
-generate_log() {
-    local filename="$1"
-    local log_dir="$2"
+path = 'C:/Users/x01438463/Desktop/dummy.xlsx'
+df = pd.read_excel(path, dtype=object)
 
-    # Create the log directory if it doesn't exist
-    mkdir -p "$log_dir"
-
-    echo "Generating log file..."
-    echo "Number of records in $filename: $(wc -l < "$filename")" > "${log_dir}/${filename##*/}.log"
-}
-
-generate_dat() {
-    local filename="$1"
-    local dat_dir="$2"
-
-    # Create the dat directory if it doesn't exist
-    mkdir -p "$dat_dir"
-
-    echo "Generating dat file..."
-    md5sum "$filename" > "${dat_dir}/${filename##*/}.dat"
-}
-
-compare_files() {
-    local filename="$1"
-    local comparefile="$2"
-
-    if cmp -s "$filename" "$comparefile"; then
-        echo "Number of records in $filename and $comparefile are the same"
-    else
-        echo "Number of records in $filename and $comparefile are different"
-    fi
-
-    if md5sum -c "${filename%.*}.dat" "$comparefile" >/dev/null; then
-        echo "Checksums of $filename and $comparefile match"
-    else
-        echo "Checksums of $filename and $comparefile do not match"
-    fi
-}
-
-# Define the paths of the original file and the file you want to compare with
-original_file="/path/to/original_file.txt"
-compare_file="/path/to/compare_file.txt"
-
-# Define the directory paths for log and dat files
-log_dir="/path/to/logs"
-dat_dir="/path/to/dats"
-
-# Input validation: Check if the specified original file exists
-if [[ ! -f "$original_file" ]]; then
-    echo "Error: The file '$original_file' does not exist."
-    exit 1
-fi
-
-generate_log "$original_file" "$log_dir"
-generate_dat "$original_file" "$dat_dir"
-
-# Input validation: Check if the specified compare file exists
-if [[ ! -f "$compare_file" ]]; then
-    echo "Error: The file '$compare_file' does not exist."
-    exit 1
-fi
-
-compare_files "$original_file" "$compare_file"
+vcond = df[df.duplicated(subset=['your_column_name'], keep=False)].groupby('your_column_name').head(1)
+sum_result = vcond['your_column_to_sum'].sum()
+print("Sum of filtered records:", sum_result)
