@@ -11,7 +11,7 @@ SELECT
     ) AS e_id,
     NVL(
         (
-            SELECT LINE_REF
+            SELECT g.LINE_REF
             FROM GSIB_RACE_GL_MAPPING g
             WHERE g.product_name = 'RACE' AND g.BCE_ACCOUNT = R.BCE_ACCOUNT AND g.end_date IS NULL
         ),
@@ -36,4 +36,4 @@ SELECT
         ) THEN 'Mapped'
         ELSE 'Unmapped'
     END AS mapp_uamapp
-FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE R
+FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE R;
