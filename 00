@@ -1,20 +1,61 @@
-LOAD INTO ds_race_data_Stg_new
-(
-  SR_NO,
-  SU_CODE,
-  BCE_ACCOUNT,
-  AMOUNT,
-  "LINE REF",
-  mapped_unmapped
-)
+INSERT INTO @table_name
 SELECT
-  ROW_NUMBER() OVER (ORDER BY R.BCE_ACCOUNT) AS SR_NO,
-  SUBSTR(R.entity, 1, 5) AS SU_CODE,
-  R.BCE_ACCOUNT,
-  R.AMOUNT,
-  NVL((SELECT g.LINE_REF FROM GSIB_RACE_GL_MAPPING g WHERE g.product_name = 'RACE' AND g.BCE_ACCOUNTER = R.BCE_ACCOUNT AND g.end_date IS NULL), 0) AS "LINE REF",
-  CASE
-    WHEN EXISTS (SELECT 1 FROM GSIB_RACE_GL_MAPPING WHERE product_name = 'RACE' AND BCE_ACCOUNTER = R.BCE_ACCOUNT AND end_date IS NULL) THEN 'Mapped'
-    ELSE 'Unmapped'
-  END AS mapped_unmapped
-FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE_R R;
+    ROW_NUMBER() OVER (ORDER BY R.BCE_ACCOUNT) AS SR_NO,
+    SUBSTR(B.entity, 1, 5) AS SU_CODE,
+    R.BCE_ACCOUNT,
+    R.AMOUNT,
+    (
+        SELECT e.id
+        FROM GSIB_AXIOM_DATA.T_GSIB_7099 e
+        WHERE e.SU_CODE LIKE '%' || SUBSTR(R.entity, 1, 5) || '%'
+    ) AS e_id,
+    NVL(
+        (
+            SELECT LINE_REF
+            FROM GSIB_RACE_GL_MAPPING g
+            WHERE g.product_name = 'RACE' AND g.BCE_ACCOUNT = R.BCE_ACCOUNT AND g.end_date IS NULL
+        ),
+        NULL
+    ) AS LINE_REF,
+    CASE
+        WHEN (
+            R.entity = 'NA' AND
+            R.REP_LINE_ID IN ('A1-1', 'A1-2', 'A1-3', 'A1-4.1', 'A1-4.2', 'A1-4.3', 'A1-4.4', 'A1-5.1', 'A1-5.2', 'A1-5.3', 'A1-5.4') AND
+            R.CURRENCY_CODE != 'NA' AND
+            R.RESIDUAL_MATURITY != 'NA' AND
+            R.GSIB_SIC_CODE = 'NA' AND
+            R.GSIB_COUNTRY_CODE = 'NA'
+        ) THEN 'Mapped'
+        WHEN (
+            R.entity = 'NA' AND
+            R.REP_LINE_ID IN ('A1-7') AND
+            R.CURRENCY_CODE != 'NA' AND
+            R.GSIB_BIC_CODE = 'NA' AND
+            R.GSIB_COUNTRY_CODE = 'NA'
+        ) THEN 'Mapped'
+        WHEN (
+            R.entity = 'NA' AND
+            R.REP_LINE_ID IN ('A1-10', 'A1-11', 'A1-12', 'A1-13') AND
+            R.CURRENCY_CODE = 'NA'
+        ) THEN 'Mapped'
+        WHEN (
+            R.entity != 'NA' AND
+            R.REP_LINE_ID IN ('12-1', '12-2', '12-3', '12-4') AND
+            R.CURRENCY_CODE = 'NA' AND
+            R.RESIDUAL_MATURITY = 'NA' AND
+            R.GSIB_BIC_CODE != 'NA' AND
+            R.GSIB_COUNTRY_CODE = 'NA'
+        ) THEN 'Mapped'
+        WHEN (
+            R.entity = 'NA' AND
+            R.REP_LINE_ID IN ('12-5', '1.2-5.A', '1.2-5.1', '12-5.2', '1.2-5.3', '12-5.4', '12-5.5', '12-5.6', '12-5.7', '12-7') AND
+            R.CURRENCY_CODE = 'NA' AND
+            R.RESIDUAL_MATURITY = 'NA'
+        ) THEN 'Mapped'
+        WHEN (
+            R.entity != 'NA' AND
+            R.REP_LINE_ID IN ('L2-12', 'L2-13', '12-15', '12-94', '12-95', '12-96', '12-97', '12-98', '12-99', '2-100')
+        ) THEN 'Mapped'
+        ELSE 'Unmapped'
+    END AS mapped_status
+FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE R;
