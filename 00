@@ -1,40 +1,76 @@
-INSERT INTO @table_name
-SELECT
-    ROW_NUMBER() OVER (ORDER BY R.BCE_ACCOUNT) AS SR_NO,
-    SUBSTR(R.entity, 1, 5) AS SU_CODE,
-    R.BCE_ACCOUNT,
-    R.AMOUNT,
-    (
-        SELECT e.id
-        FROM GSIB_AXIOM_DATA.T_GSIB_7099 e
-        WHERE e.SU_CODE LIKE '%' || SUBSTR(R.entity, 1, 5) || '%'
-    ) AS E_ID,
-    NVL(
-        (
-            SELECT G.LINE_REF
-            FROM GSIB_RACE_GL_MAPPING G
-            WHERE G.product_name = 'RACE' AND G.BCE_ACCOUNT = R.BCE_ACCOUNT AND G.end_date IS NULL
-        ),
-        0
-    ) AS LINE_REF,
-    CASE
-        WHEN (R.entity != 'NA' AND
-              R.REP_LINE_ID IN ('A1-1', 'A1-2', 'A1-3', 'A1-4.1', 'A1-4.2', 'A1-4.3', 'A1-4.4', 'A1-5.1', 'A1-5.2', 'A1-5.3', 'A1-5.4') AND
-              R.CURRENCY_CODE != 'NA' AND R.RESIDUAL_MATURITY != 'NA' AND R.GSIB_BIC_CODE = 'NA' AND R.GSIB_COUNTRY_CODE = 'NA')
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('A1-7') AND R.CURRENCY_CODE = 'NA' AND R.GSIB_BIC_CODE = 'NA' AND R.GSIB_COUNTRY_CODE = 'NA')
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('A1-10', 'A1-11', 'A1-12', 'A1-13'))
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('L2-1', 'L2-2', 'L2-3', 'L2-4') AND R.CURRENCY_CODE = 'NA' AND R.RESIDUAL_MATURITY = 'NA' AND R.GSIB_BIC_CODE != 'NA' AND R.GSIB_COUNTRY_CODE = 'NA')
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('L2-5', 'L2-5.A', 'L2-5.1', '12-5.2', 'L2-5.3', '12-5.4', '12-5.5', 'L2-5.6', '12-5.7', '12-7') AND R.CURRENCY_CODE != 'NA' AND R.RESIDUAL_MATURITY != 'NA')
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('L2-12', 'L2-13', 'L2-15', '12-94', 'L2-95', '12-96', 'L2-97', '12-98', 'L2-99', 'L2-100', 'L2-10', 'L2-11'))
-            THEN 'Mapped'
-        WHEN (R.entity != 'NA' AND R.REP_LINE_ID IN ('12-7') AND R.GSIB_BIC_CODE = 'NA' AND R.GSIB_COUNTRY_CODE = 'NA')
-            THEN 'Mapped'
-        ELSE 'Unmapped'
-    END AS mapped_unmapped
-FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE R
-JOIN GSIB_RACE_GL_MAPPING G ON R.BCE_ACCOUNT = G.BCE_ACCOUNT AND G.end_date IS NULL;
+#!/bin/bash
+
+# Load the environment variables
+source ./apps/axiom_app/boe/batch/scripts/environment/gsib_reg.env
+
+# Define the file path and name pattern for the data files
+filepath_name=$(ls "$BCE_PROCESSED"/2023_Q1/GSIB_BS_Actual_*.txt)
+
+# Define the control file for SQL*Loader
+ctlfilename="$REGSH/gsib/race/axiom_gsib_race_load.ctl"
+
+# Get the current date for log file naming
+date_tm=$(date +"%d %b %Y")
+log_file="$BCELOG/Race_Data_Load_${date_tm}.log"
+
+# Use SQL*Loader to load data into the database
+sqlldr USERID="$REG_LOGIN" control="$ctlfilename" data="$filepath_name" log="$log_file"
+
+# Get the exit status of SQL*Loader
+exit_status=$?
+
+# Check if SQL*Loader ran successfully
+if [ $exit_status -eq 0 ]; then
+    # Calculate and create dynamic partitions
+    sqlplus -s "$REG_LOGIN" <<EOF
+        WHENEVER SQLERROR EXIT SQL.SQLCODE
+        DECLARE
+            CURSOR c_data IS
+                SELECT DISTINCT RACE_YEAR, PERIOD FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE;
+        BEGIN
+            FOR rec IN c_data LOOP
+                DECLARE
+                    v_partition_name VARCHAR2(20);
+                BEGIN
+                    -- Calculate partition name (e.g., Mar23)
+                    v_partition_name := TO_CHAR(TO_DATE(rec.PERIOD || rec.RACE_YEAR, 'MonYY'), 'MonYY');
+                    -- Check if partition already exists
+                    EXECUTE IMMEDIATE 'SELECT PARTITION_NAME FROM USER_TAB_PARTITIONS WHERE TABLE_NAME = ''GSIB_RACE_DATA_STAGE'' AND PARTITION_NAME = ''P_' || v_partition_name || ''''
+                    INTO v_partition_name;
+                    IF v_partition_name IS NULL THEN
+                        -- Create partition
+                        EXECUTE IMMEDIATE 'ALTER TABLE GSIB_RACE_DATA_STAGE ADD PARTITION P_' || v_partition_name ||
+                            ' VALUES LESS THAN (''' || v_partition_name || ''')';
+                    END IF;
+                    -- Update PARTITION_KEY
+                    EXECUTE IMMEDIATE 'UPDATE GSIB_RACE_DATA_STAGE SET PARTITION_KEY = ''' || v_partition_name || ''' ' ||
+                        'WHERE RACE_YEAR = ''' || rec.RACE_YEAR || ''' AND PERIOD = ''' || rec.PERIOD || '''';
+                EXCEPTION
+                    WHEN OTHERS THEN
+                        ROLLBACK;
+                        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+                END;
+            END LOOP;
+            COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+                ROLLBACK;
+                DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+        END;
+        /
+EOF
+
+    # Exit status of dynamic partition creation
+    partition_exit_status=$?
+
+    if [ $partition_exit_status -eq 0 ]; then
+        echo "Dynamic partitions and PARTITION_KEY updates created successfully"
+    else
+        echo "Error creating dynamic partitions and PARTITION_KEY updates"
+    fi
+
+    exit $partition_exit_status
+else
+    echo "SQL Loader had errors. No dynamic partitions or PARTITION_KEY updates created."
+    exit $exit_status
+fi
