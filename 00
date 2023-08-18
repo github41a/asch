@@ -1,26 +1,35 @@
+ALTER TABLE GSIB_RACE_DATA_STAGE
+MODIFY PARTITION BY RANGE (TO_DATE(PERIOD || RACE_YEAR, 'MonYYYY'))
+INTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))
+(PARTITION P_INITIAL VALUES LESS THAN (TO_DATE('01-JAN-2000', 'DD-MON-YYYY')));
+
+
+
 SET SERVEROUTPUT ON;
 
 DECLARE
     v_partition_key VARCHAR2(10);
     v_partition_count NUMBER;
-    
+
     CURSOR c_data IS
-        SELECT DISTINCT RACE_YEAR, PERIOD FROM GSIB_AXIOM_DATA.GSIB_RACE_DATA_STAGE;
-    
+        SELECT DISTINCT RACE_YEAR, PERIOD FROM GSIB_AXIOM_DATA.GBIB_RACE_DATA_STAGE WHERE PERIOD IS NOT NULL;
+
 BEGIN
     FOR rec IN c_data LOOP
         v_partition_key := TO_CHAR(TO_DATE(rec.PERIOD || rec.RACE_YEAR, 'MonYY'), 'MonYY');
-        
-        EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM USER_TAB_PARTITIONS WHERE TABLE_NAME = ''GSIB_RACE_DATA_STAGE'' AND PARTITION_NAME = ''P_' || v_partition_key || ''''
+
+        -- Check if partition with the given key exists
+        EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM USER_TAB_PARTITIONS WHERE TABLE_NAME = ''GBIB_RACE_DATA_STAGE'' AND PARTITION_NAME = ''P_' || v_partition_key || ''''
         INTO v_partition_count;
-        
+
         IF v_partition_count = 0 THEN
-            EXECUTE IMMEDIATE 'ALTER TABLE GSIB_RACE_DATA_STAGE ADD PARTITION P_' || v_partition_key ||
+            -- Create partition
+            EXECUTE IMMEDIATE 'ALTER TABLE GBIB_RACE_DATA_STAGE ADD PARTITION P_' || v_partition_key ||
                 ' VALUES LESS THAN (''' || v_partition_key || ''')';
         END IF;
 
         -- Update PARTITION_KEY for existing data
-        EXECUTE IMMEDIATE 'UPDATE GSIB_RACE_DATA_STAGE SET PARTITION_KEY = ''' || v_partition_key || ''' ' ||
+        EXECUTE IMMEDIATE 'UPDATE GBIB_RACE_DATA_STAGE SET PARTITION_KEY = ''' || v_partition_key || ''' ' ||
             'WHERE RACE_YEAR = ' || rec.RACE_YEAR || ' AND PERIOD = ''' || rec.PERIOD || '''';
         
     END LOOP;
@@ -33,3 +42,4 @@ EXCEPTION
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
 END;
+/
