@@ -1,45 +1,24 @@
-ALTER TABLE GSIB_RACE_DATA_STAGE
-MODIFY PARTITION BY RANGE (TO_DATE(PERIOD || RACE_YEAR, 'MonYYYY'))
-INTERVAL (NUMTOYMINTERVAL(1, 'MONTH'))
-(PARTITION P_INITIAL VALUES LESS THAN (TO_DATE('01-JAN-2000', 'DD-MON-YYYY')));
+CREATE TABLE Employee (
+    EmployeeID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    DateOfBirth DATE,
+    Department VARCHAR(50)
+);
+INSERT INTO Employee (EmployeeID, FirstName, LastName, DateOfBirth, Department)
+VALUES
+    (1, 'John', 'Doe', '1990-05-15', 'Sales'),
+    (2, 'Jane', 'Smith', '1985-10-20', 'Marketing'),
+    (3, 'Michael', 'Johnson', '1992-03-03', 'IT'),
+    (4, 'Emily', 'Brown', '1993-08-08', 'HR'),
+    (5, 'David', 'Williams', '1988-12-17', 'Finance');
+DELIMITER //
 
-
-
-SET SERVEROUTPUT ON;
-
-DECLARE
-    v_partition_key VARCHAR2(10);
-    v_partition_count NUMBER;
-
-    CURSOR c_data IS
-        SELECT DISTINCT RACE_YEAR, PERIOD FROM GSIB_AXIOM_DATA.GBIB_RACE_DATA_STAGE WHERE PERIOD IS NOT NULL;
-
+CREATE PROCEDURE GetEmployeeDetails(IN p_EmployeeID INT)
 BEGIN
-    FOR rec IN c_data LOOP
-        v_partition_key := TO_CHAR(TO_DATE(rec.PERIOD || rec.RACE_YEAR, 'MonYY'), 'MonYY');
+    SELECT * FROM Employee WHERE EmployeeID = p_EmployeeID;
+END //
 
-        -- Check if partition with the given key exists
-        EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM USER_TAB_PARTITIONS WHERE TABLE_NAME = ''GBIB_RACE_DATA_STAGE'' AND PARTITION_NAME = ''P_' || v_partition_key || ''''
-        INTO v_partition_count;
+DELIMITER ;
 
-        IF v_partition_count = 0 THEN
-            -- Create partition
-            EXECUTE IMMEDIATE 'ALTER TABLE GBIB_RACE_DATA_STAGE ADD PARTITION P_' || v_partition_key ||
-                ' VALUES LESS THAN (''' || v_partition_key || ''')';
-        END IF;
-
-        -- Update PARTITION_KEY for existing data
-        EXECUTE IMMEDIATE 'UPDATE GBIB_RACE_DATA_STAGE SET PARTITION_KEY = ''' || v_partition_key || ''' ' ||
-            'WHERE RACE_YEAR = ' || rec.RACE_YEAR || ' AND PERIOD = ''' || rec.PERIOD || '''';
-        
-    END LOOP;
-
-    COMMIT;
-    DBMS_OUTPUT.PUT_LINE('Update statement: Success');
-
-EXCEPTION
-    WHEN OTHERS THEN
-        ROLLBACK;
-        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
-END;
-/
+CALL GetEmployeeDetails(3); -- Replace 3 with the desired Employee ID
