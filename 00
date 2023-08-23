@@ -1,6 +1,37 @@
-CREATE OR REPLACE PROCEDURE GetEmployeeDetails(p_EmployeeID NUMBER) IS
-BEGIN
-    SELECT * FROM Employee WHERE EmployeeID = p_EmployeeID;
-END GetEmployeeDetails;
-/
-EXECUTE GetEmployeeDetails(3); -- Replace 3 with the desired Employee ID
+#!/bin/sh
+
+echo "Process started"
+
+start=$(date +%s)
+
+source ./apps/axiom.app/boe/batch/scripts/environment/gsib.env
+
+cd SBCEINBOX
+
+ls -t1 GSIB_BS_Actual*.zip | head -n 1 > $BASE_RACE/race_text.txt
+
+cat $BASE_RACE/race_text.txt | xargs -I {} cp {} SBASE_RACE
+
+echo "File copied"
+
+cd $BASE_RACE
+
+unzip $(cat race_text.txt)
+
+ls -t1 GSIB_BS_Actual*.txt | head -n 1 > race_file.txt
+
+cat race_file.txt | xargs -I {} cp {} race.txt
+
+sed -i 's/;//g' race.txt
+
+sed '$d' race.txt > race_extract.txt
+
+echo "Latest ZIP file extracted and text file prepared."
+
+# Call your axiom_gsib_race_load script here
+/path/to/axiom_gsib_race_load.sh
+
+# Removing the specified files
+rm race_extract.txt race_text.txt race.txt
+
+echo "Process completed."
