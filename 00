@@ -1,37 +1,18 @@
-#!/bin/sh
+python
+import openpyxl
 
-echo "Process started"
+# Load the Excel file
+workbook = openpyxl.load_workbook('your_file.xlsx')
 
-start=$(date +%s)
+# Select the sheet
+sheet = workbook['your_sheet']
 
-source ./apps/axiom.app/boe/batch/scripts/environment/gsib.env
+# Iterate through the rows
+for row in sheet.iter_rows():
+    # Check if the cell_comment column matches your criteria
+    if row[0].comment:
+        # Delete the cell_comment data
+        row[0].comment.text = None
 
-cd SBCEINBOX
-
-ls -t1 GSIB_BS_Actual*.zip | head -n 1 > $BASE_RACE/race_text.txt
-
-cat $BASE_RACE/race_text.txt | xargs -I {} cp {} SBASE_RACE
-
-echo "File copied"
-
-cd $BASE_RACE
-
-unzip $(cat race_text.txt)
-
-ls -t1 GSIB_BS_Actual*.txt | head -n 1 > race_file.txt
-
-cat race_file.txt | xargs -I {} cp {} race.txt
-
-sed -i 's/;//g' race.txt
-
-sed '$d' race.txt > race_extract.txt
-
-echo "Latest ZIP file extracted and text file prepared."
-
-# Call your axiom_gsib_race_load script here
-/path/to/axiom_gsib_race_load.sh
-
-# Removing the specified files
-rm race_extract.txt race_text.txt race.txt
-
-echo "Process completed."
+# Save the changes
+workbook.save('your_file.xlsx')
