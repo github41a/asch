@@ -8,6 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, LSTM, Dense
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import os
 
 # Step 1: Generate synthetic daily sales prediction data
 np.random.seed(0)
@@ -27,14 +28,13 @@ daily_data = pd.DataFrame({
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(daily_data[['Feature1', 'Feature2', 'Feature3']])
 
-# Reduce dimensionality using PCA or t-SNE
-# We'll use PCA for simplicity
+# Reduce dimensionality using PCA for simplicity
 pca = PCA(n_components=2)
 reduced_data = pca.fit_transform(scaled_data)
 
 # Find the optimal number of clusters using silhouette score
-cluster_range = range(2, 11)
-best_num_clusters = 2
+cluster_range = range(2, 4)  # Adjust the range as needed
+best_num_clusters = 2  # Initialize with a reasonable default
 best_silhouette_score = -1
 
 for num_clusters in cluster_range:
@@ -102,22 +102,20 @@ sample_input_text = "Cluster 0 commentary:"
 generated_commentary = generate_commentary(sample_input_text)
 print(f"Generated Commentary: {generated_commentary}")
 
-# Load the Excel data with labels
-daily_data_with_labels = pd.read_excel('daily_sales_data_with_labels.xlsx')
+# Load the Excel data with labels (replace with your file path)
+daily_data_with_labels = pd.read_excel('daily_sales_data_with_labels.xlsx', sheet_name='Sheet1')
 
 # Modify the clustering part to include labels
-# Concatenate features and labels
-data_for_clustering = daily_data_with_labels[['Feature1', 'Feature2', 'Feature3', 'Labels']]
+data_for_clustering = daily_data_with_labels[[' Feature1', ' Feature2', ' Feature3', 'Labels']]
 # Scale the concatenated data
 scaler = StandardScaler()
 scaled_data = scaler.fit_transform(data_for_clustering)
-# Perform PCA or t-SNE on scaled data
 
 # Modify the commentary generation part to include labels
 daily_data_with_labels['Commentary'] = daily_data_with_labels.apply(lambda row: f"Cluster {row['Cluster']} with Label '{row['Labels']}' commentary: "
-                                                    f"Sales for Feature1={row['Feature1']:.2f}, "
-                                                    f"Feature2={row['Feature2']:.2f}, "
-                                                    f"Feature3={row['Feature3']:.2f}.", axis=1)
+                                                    f"Sales for Feature1={row[' Feature1']:.2f}, "
+                                                    f"Feature2={row[' Feature2']:.2f}, "
+                                                    f"Feature3={row[' Feature3']:.2f}.", axis=1)
 
 # Tokenize the commentary text for data with labels
 tokenizer_with_labels = Tokenizer()
