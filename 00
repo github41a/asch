@@ -1,18 +1,166 @@
-python
-import openpyxl
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Load the Excel file
-workbook = openpyxl.load_workbook('your_file.xlsx')
+# Step 1: Generate synthetic daily sales prediction data
+np.random.seed(0)
+num_samples = 10
+daily_data = pd.DataFrame({
+    'Feature1': np.random.rand(num_samples) * 50 + 10,
+    'Feature2': np.random.rand(num_samples) * 50 + 20,
+    'Feature3': np.random.rand(num_samples) * 50 + 30
+})
 
-# Select the sheet
-sheet = workbook['your_sheet']
+# Step 2: Data preprocessing (numerical features scaling, handling missing values, etc.)
+# For simplicity, we'll assume data is already preprocessed.
 
-# Iterate through the rows
-for row in sheet.iter_rows():
-    # Check if the cell_comment column matches your criteria
-    if row[0].comment:
-        # Delete the cell_comment data
-        row[0].comment.text = None
+# Step 3: Clustering - Determine the optimal number of clusters
 
-# Save the changes
-workbook.save('your_file.xlsx')
+# Standardize the numerical features
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(daily_data[['Feature1', 'Feature2', 'Feature3']])
+
+# Reduce dimensionality using PCA or t-SNE
+# We'll use PCA for simplicity
+pca = PCA(n_components=2)
+reduced_data = pca.fit_transform(scaled_data)
+
+# Find the optimal number of clusters using silhouette score
+cluster_range = range(2, 11)
+best_num_clusters = 2
+best_silhouette_score = -1
+
+for num_clusters in cluster_range:
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+    cluster_labels = kmeans.fit_predict(reduced_data)
+    silhouette_avg = silhouette_score(reduced_data, cluster_labels)
+    
+    if silhouette_avg > best_silhouette_score:
+        best_silhouette_score = silhouette_avg
+        best_num_clusters = num_clusters
+
+# Perform K-Means clustering with the optimal number of clusters
+kmeans = KMeans(n_clusters=best_num_clusters, random_state=42)
+daily_data['Cluster'] = kmeans.fit_predict(reduced_data)
+
+# Step 4: Commentary Generation for Data without Labels
+
+# Generate commentary based on numerical features
+daily_data['Commentary'] = daily_data.apply(lambda row: f"Cluster {row['Cluster']} commentary: "
+                                                    f"Sales for Feature1={row['Feature1']:.2f}, "
+                                                    f"Feature2={row['Feature2']:.2f}, "
+                                                    f"Feature3={row['Feature3']:.2f}.", axis=1)
+
+# Tokenize the commentary text
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(daily_data['Commentary'])
+total_words = len(tokenizer.word_index) + 1
+
+# Create input sequences and corresponding target commentary
+input_sequences = []
+target_commentary = []
+for i in range(len(daily_data)):
+    sequence = tokenizer.texts_to_sequences([daily_data['Commentary'][i]])[0]
+    for j in range(1, len(sequence)):
+        input_sequences.append(sequence[:j])
+        target_commentary.append(sequence[j])
+
+input_sequences = pad_sequences(input_sequences)
+target_commentary = np.array(target_commentary)
+
+# Build an RNN model for text generation
+model = Sequential()
+model.add(Embedding(total_words, 100, input_length=input_sequences.shape[1]))
+model.add(LSTM(150))
+model.add(Dense(total_words, activation='softmax'))
+
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+model.fit(input_sequences, target_commentary, epochs=100, verbose=1)
+
+# Function to generate commentary for data without labels
+def generate_commentary(input_text):
+    input_sequence = tokenizer.texts_to_sequences([input_text])[0]
+    generated_comment = input_sequence[:]
+    
+    for _ in range(10):  # Adjust the number of words to generate
+        pad_sequence = pad_sequences([generated_comment], maxlen=input_sequences.shape[1], truncating='pre')
+        predicted_word_index = np.argmax(model.predict(pad_sequence, verbose=0), axis=-1)[0]
+        generated_comment.append(predicted_word_index)
+
+    generated_commentary = ' '.join([word for word, index in tokenizer.index_word.items() if index in generated_comment])
+    return generated_commentary
+
+# Example usage: Generate commentary for a specific cluster (e.g., Cluster 0)
+sample_input_text = "Cluster 0 commentary:"
+generated_commentary = generate_commentary(sample_input_text)
+print(f"Generated Commentary: {generated_commentary}")
+
+# Load the Excel data with labels
+daily_data_with_labels = pd.read_excel('daily_sales_data_with_labels.xlsx')
+
+# Modify the clustering part to include labels
+# Concatenate features and labels
+data_for_clustering = daily_data_with_labels[['Feature1', 'Feature2', 'Feature3', 'Labels']]
+# Scale the concatenated data
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(data_for_clustering)
+# Perform PCA or t-SNE on scaled data
+
+# Modify the commentary generation part to include labels
+daily_data_with_labels['Commentary'] = daily_data_with_labels.apply(lambda row: f"Cluster {row['Cluster']} with Label '{row['Labels']}' commentary: "
+                                                    f"Sales for Feature1={row['Feature1']:.2f}, "
+                                                    f"Feature2={row['Feature2']:.2f}, "
+                                                    f"Feature3={row['Feature3']:.2f}.", axis=1)
+
+# Tokenize the commentary text for data with labels
+tokenizer_with_labels = Tokenizer()
+tokenizer_with_labels.fit_on_texts(daily_data_with_labels['Commentary'])
+total_words_with_labels = len(tokenizer_with_labels.word_index) + 1
+
+# Create input sequences and corresponding target commentary for data with labels
+input_sequences_with_labels = []
+target_commentary_with_labels = []
+for i in range(len(daily_data_with_labels)):
+    sequence = tokenizer_with_labels.texts_to_sequences([daily_data_with_labels['Commentary'][i]])[0]
+    for j in range(1, len(sequence)):
+        input_sequences_with_labels.append(sequence[:j])
+        target_commentary_with_labels.append(sequence[j])
+
+input_sequences_with_labels = pad_sequences(input_sequences_with_labels)
+target_commentary_with_labels = np.array(target_commentary_with_labels)
+
+# Build an RNN model for text generation for data with labels
+model_with_labels = Sequential()
+model_with_labels.add(Embedding(total_words_with_labels, 100, input_length=input_sequences_with_labels.shape[1]))
+model_with_labels.add(LSTM(150))
+model_with_labels.add(Dense(total_words_with_labels, activation='softmax'))
+
+model_with_labels.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
+model_with_labels.fit(input_sequences_with_labels, target_commentary_with_labels, epochs=100, verbose=1)
+
+# Function to generate commentary for data with labels
+def generate_commentary_with_labels(input_text, labels):
+    input_sequence = tokenizer_with_labels.texts_to_sequences([input_text])[0]
+    generated_comment = input_sequence[:]
+    
+    for _ in range(10):  # Adjust the number of words to generate
+        pad_sequence = pad_sequences([generated_comment], maxlen=input_sequences_with_labels.shape[1], truncating='pre')
+        predicted_word_index = np.argmax(model_with_labels.predict(pad_sequence, verbose=0), axis=-1)[0]
+        generated_comment.append(predicted_word_index)
+
+    generated_commentary = ' '.join([word for word, index in tokenizer_with_labels.index_word.items() if index in generated_comment])
+    return generated_commentary
+
+# Example usage: Generate commentary for a specific cluster (e.g., Cluster 0) with labels
+sample_input_text_with_labels = "Cluster 0 commentary:"
+sample_row = daily_data_with_labels.loc[daily_data_with_labels['Commentary'] == sample_input_text_with_labels]
+labels_for_sample = sample_row['Labels'].values[0] if not sample_row.empty else "Unknown Label"
+generated_commentary_with_labels = generate_commentary_with_labels(sample_input_text_with_labels, labels_for_sample)
+print(f"Generated Commentary with Labels: {generated_commentary_with_labels}")
