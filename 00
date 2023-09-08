@@ -3,18 +3,25 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 
-sales_data = pd.DataFrame({
-    'Feature1': [35.12, 14.56, 44.78, 10.12, 47.32, 19.65, 10.12, 14.56, 35.12, 44.78, 25.33, 18.75, 48.92, 10.12, 42.11, 27.89, 10.12, 22.65, 35.12, 41.24, 30.75],
-    'Feature2': [21.75, 24.89, 34.23, 25.67, 24.12, 40.01, 25.67, 24.89, 21.75, 34.23, 18.45, 33.21, 23.58, 25.67, 20.33, 38.45, 25.67, 37.1, 21.75, 29.87, 36.29],
-    'Feature3': [31.46, 39.01, 36.74, 34.82, 30.05, 36.19, 34.82, 39.01, 31.46, 36.74, 35.88, 31.42, 32.1, 34.82, 38.75, 32.67, 34.82, 33.12, 31.46, 35.67, 37.58],
-    'Labels': ['LabelA', 'LabelB', None, 'LabelA', None, 'LabelB', 'LabelC', None, 'LabelD', 'LabelC', 'LabelE', None, None, 'LabelA', None, 'LabelB', None, None, 'LabelA', None, 'LabelB']
-})
+# Load data from an Excel file
+excel_file_path = 'sales.xlsx'
+sales_data = pd.read_excel(excel_file_path, sheet_name='Sheet1')
+sales_data.columns = sales_data.columns.str.strip()
 
+# Fill missing values with 0
 sales_data.fillna(0, inplace=True)
 
-scaler = StandardScaler()
-scaled_sales_data = scaler.fit_transform(sales_data[['Feature1', 'Feature2', 'Feature3']])
+# Convert selected columns to numeric data types
+numeric_features = ['Feature1', 'Feature2', 'Feature3']
+sales_data[numeric_features] = sales_data[numeric_features].apply(pd.to_numeric, errors='coerce')
 
+# Drop rows with NaN values (if any)
+sales_data.dropna(subset=numeric_features, inplace=True)
+
+# Extract numerical features for clustering
+scaled_sales_data = StandardScaler().fit_transform(sales_data[numeric_features])
+
+# Determine the best number of clusters using silhouette score
 cluster_range = range(2, 4)
 best_num_clusters = 2
 best_silhouette_score = -1
@@ -28,18 +35,29 @@ for num_clusters in cluster_range:
         best_silhouette_score = silhouette_avg
         best_num_clusters = num_clusters
 
+# Perform K-Means clustering with the best number of clusters
 kmeans = KMeans(n_clusters=best_num_clusters, random_state=42)
 sales_data['Cluster'] = kmeans.fit_predict(scaled_sales_data)
 
-def generate_commentary(row):
-    if row['Cluster'] == 0:
-        return "This day should see strong sales growth."
-    elif row['Cluster'] == 1:
-        return "Sales are expected to be slow this day."
-    elif row['Cluster'] == 2:
-        return "We anticipate moderate sales today."
+# Calculate daily sales growth or decline based on previous day's data
+sales_data['Prev_Day_Sales'] = sales_data.groupby(['Labels'])['Feature1'].shift(1)
+sales_data['Sales_Growth'] = ((sales_data['Feature1'] - sales_data['Prev_Day_Sales']) / sales_data['Prev_Day_Sales']) * 100
 
+# Define a function to generate commentary based on cluster assignments and sales growth
+def generate_commentary(row):
+    cluster_id = row['Cluster']
+    sales_growth = row['Sales_Growth']
+    
+    if cluster_id == 0:
+        return f"This day should see strong sales growth by {sales_growth:.2f}% based on previous day's data."
+    elif cluster_id == 1:
+        return f"Sales are expected to be slow this day by {sales_growth:.2f}% based on previous day's data."
+    # Add more conditions if needed for additional clusters
+
+# Apply the generate_commentary function to each row
 sales_data['Commentary'] = sales_data.apply(generate_commentary, axis=1)
 
+# Print or save the output
+pd.set_option('display.max_colwidth', None)
 output_sales_data = sales_data[['Feature1', 'Feature2', 'Feature3', 'Labels', 'Cluster', 'Commentary']]
 print(output_sales_data)
