@@ -1,63 +1,149 @@
 import pandas as pd
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
+import numpy as np
+from statsmodels.tsa.arima_model import ARIMA
 
-# Load data from an Excel file
-excel_file_path = 'sales.xlsx'
-sales_data = pd.read_excel(excel_file_path, sheet_name='Sheet1')
-sales_data.columns = sales_data.columns.str.strip()
+# Define the input data as a pandas DataFrame
+data = {
+    'ID': ['ID07351', 'ID07352', 'ID07353', 'ID07354', 'ID07355', 'ID07356', 'ID07357', 'ID07358', 'ID07359', 'ID07360',
+           'ID07361', 'ID07362', 'ID07363'],
+    'Date': ['1-Jan-2022', '4-Jan-2022', '7-Jan-2022', '10-Jan-2022', '13-Jan-2022', '16-Jan-2022', '19-Jan-2022', '22-Jan-2022', '25-Jan-2022', '28-Jan-2022', '31-Jan-2022', '3-Feb-2022', '6-Feb-2022'],
+    'Region': ['East', 'East', 'West', 'East', 'East', 'East', 'East', 'West', 'East', 'East', 'East', 'East', 'East'],
+    'City': ['Boston', 'Boston', 'Los Angeles', 'New York', 'Boston', 'Boston', 'Boston', 'Los Angeles', 'New York', 'New York', 'Boston', 'Boston', 'Boston'],
+    'Category': ['Bars', 'Crackers', 'Cookies', 'Cookies', 'Cookies', 'Bars', 'Crackers', 'Bars', 'Bars', 'Snacks', 'Cookies', 'Cookies', 'Crackers'],
+    'Product': ['Carrot', 'Whole Wheat', 'Chocolate Chip', 'Chocolate Chip', 'Arrowroot', 'Carrot', 'Whole Wheat', 'Carrot', 'Carrot', 'Potato Chips', 'Arrowroot', 'Chocolate Chip', 'Whole Wheat'],
+    'Qty': [33, 87, 58, 82, 38, 54, 149, 51, 100, 28, 36, 31, 28],
+    'UnitPrice': [1.77, 3.49, 1.87, 1.87, 2.18, 1.77, 3.49, 1.77, 1.77, 1.35, 2.18, 1.87, 3.49],
+    'TotalPrice': [58.41, 303.63, 108.46, 153.34, 82.84, 95.58, 520.01, 90.27, 177, 37.8, 78.48, 57.97, 97.72]
+}
 
-# Fill missing values with 0
-sales_data.fillna(0, inplace=True)
+# Extend the data with additional records for 2023, 2022, and 2021
+additional_data = {
+    'ID': ['ID07364', 'ID07365', 'ID07366', 'ID07367', 'ID07368', 'ID07369'],
+    'Date': ['1-Jan-2023', '4-Jan-2023', '7-Jan-2023', '10-Jan-2023', '13-Jan-2023', '16-Jan-2023'],
+    'Region': ['East', 'East', 'West', 'East', 'East', 'East'],
+    'City': ['Boston', 'Boston', 'Los Angeles', 'New York', 'Boston', 'Boston'],
+    'Category': ['Cookies', 'Bars', 'Snacks', 'Bars', 'Cookies', 'Cookies'],
+    'Product': ['Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot', 'Arrowroot', 'Chocolate Chip'],
+    'Qty': [72, 44, 58, 61, 39, 75],
+    'UnitPrice': [1.87, 1.77, 1.35, 1.77, 2.18, 1.87],
+    'TotalPrice': [134.64, 78.28, 78.3, 108.57, 85.02, 140.25]
+}
 
-# Convert selected columns to numeric data types
-numeric_features = ['Feature1', 'Feature2', 'Feature3']
-sales_data[numeric_features] = sales_data[numeric_features].apply(pd.to_numeric, errors='coerce')
+# Append the additional data to the existing DataFrame
+extended_data = pd.DataFrame(data)
+extended_data = extended_data.append(additional_data, ignore_index=True)
 
-# Drop rows with NaN values (if any)
-sales_data.dropna(subset=numeric_features, inplace=True)
+# Define additional data for 2022
+additional_data_2022 = {
+    'ID': ['ID07370', 'ID07371', 'ID07372', 'ID07373', 'ID07374'],
+    'Date': ['1-Jan-2022', '4-Jan-2022', '7-Jan-2022', '10-Jan-2022', '13-Jan-2022'],
+    'Region': ['West', 'West', 'East', 'East', 'West'],
+    'City': ['Los Angeles', 'Los Angeles', 'New York', 'New York', 'Los Angeles'],
+    'Category': ['Snacks', 'Cookies', 'Bars', 'Snacks', 'Bars'],
+    'Product': ['Potato Chips', 'Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot'],
+    'Qty': [62, 46, 74, 56, 68],
+    'UnitPrice': [1.35, 1.87, 1.77, 1.35, 1.77],
+    'TotalPrice': [83.7, 85.82, 130.98, 75.6, 120.36]
+}
 
-# Extract numerical features for clustering
-scaled_sales_data = StandardScaler().fit_transform(sales_data[numeric_features])
+# Append the additional data for 2022
+extended_data = extended_data.append(additional_data_2022, ignore_index=True)
 
-# Determine the best number of clusters using silhouette score
-cluster_range = range(2, 4)
-best_num_clusters = 2
-best_silhouette_score = -1
+# Define additional data for 2021
+additional_data_2021 = {
+    'ID': ['ID07375', 'ID07376', 'ID07377', 'ID07378', 'ID07379'],
+    'Date': ['1-Jan-2021', '4-Jan-2021', '7-Jan-2021', '10-Jan-2021', '13-Jan-2021'],
+    'Region': ['West', 'West', 'East', 'East', 'West'],
+    'City': ['Los Angeles', 'Los Angeles', 'New York', 'New York', 'Los Angeles'],
+    'Category': ['Snacks', 'Cookies', 'Bars', 'Snacks', 'Bars'],
+    'Product': ['Potato Chips', 'Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot'],
+    'Qty': [70, 48, 78, 60, 70],
+    'UnitPrice': [1.35, 1.87, 1.77, 1.35, 1.77],
+    'TotalPrice': [94.5, 89.76, 138.06, 81.0, 123.9]
+}
 
-for num_clusters in cluster_range:
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-    cluster_labels = kmeans.fit_predict(scaled_sales_data)
-    silhouette_avg = silhouette_score(scaled_sales_data, cluster_labels)
-    
-    if silhouette_avg > best_silhouette_score:
-        best_silhouette_score = silhouette_avg
-        best_num_clusters = num_clusters
+# Append the additional data for 2021
+extended_data = extended_data.append(additional_data_2021, ignore_index=True)
 
-# Perform K-Means clustering with the best number of clusters
-kmeans = KMeans(n_clusters=best_num_clusters, random_state=42)
-sales_data['Cluster'] = kmeans.fit_predict(scaled_sales_data)
+# Prompt the user to specify the start and end dates for analysis
+start_date_input = input("Enter the start date for analysis (e.g., '2023-09-01'): ")
+end_date_input = input("Enter the end date for analysis (e.g., '2023-10-08'): ")
 
-# Calculate daily sales growth or decline based on previous day's data
-sales_data['Prev_Day_Sales'] = sales_data.groupby(['Labels'])['Feature1'].shift(1)
-sales_data['Sales_Growth'] = ((sales_data['Feature1'] - sales_data['Prev_Day_Sales']) / sales_data['Prev_Day_Sales']) * 100
+# Convert the user input to datetime objects
+start_date = pd.to_datetime(start_date_input)
+end_date = pd.to_datetime(end_date_input)
 
-# Define a function to generate commentary based on cluster assignments and sales growth
-def generate_commentary(row):
-    cluster_id = row['Cluster']
-    sales_growth = row['Sales_Growth']
-    
-    if cluster_id == 0:
-        return f"This day should see strong sales growth by {sales_growth:.2f}% based on previous day's data."
-    elif cluster_id == 1:
-        return f"Sales are expected to be slow this day by {sales_growth:.2f}% based on previous day's data."
-    # Add more conditions if needed for additional clusters
+# Filter data for the specified date range
+selected_data = extended_data[(extended_data['Date'] >= start_date) & (extended_data['Date'] <= end_date)]
 
-# Apply the generate_commentary function to each row
-sales_data['Commentary'] = sales_data.apply(generate_commentary, axis=1)
+# Prompt the user to specify labels or products
+user_input_labels = input("Enter labels or products (comma-separated) you want to analyze, or leave empty for all: ")
 
-# Print or save the output
-pd.set_option('display.max_colwidth', None)
-output_sales_data = sales_data[['Feature1', 'Feature2', 'Feature3', 'Labels', 'Cluster', 'Commentary']]
-print(output_sales_data)
+# Filter data for the specified labels or products
+if user_input_labels:
+    selected_labels = [label.strip() for label in user_input_labels.split(',')]
+    selected_data = selected_data[selected_data['Product'].isin(selected_labels)]
+
+# Create lag features for previous sales data
+selected_data['Sales_Lag1'] = selected_data.groupby('Product')['Qty'].shift(1)
+selected_data['Sales_Lag2'] = selected_data.groupby('Product')['Qty'].shift(2)
+
+# Drop missing values resulting from lag calculations
+selected_data = selected_data.dropna()
+
+# Initialize a dictionary to store sales percentage changes
+percentage_changes = {}
+
+# Initialize a dictionary to store detailed sales data commentary
+detailed_commentary = {}
+
+# Iterate over selected labels or products
+for label in selected_data['Product'].unique():
+    product_data = selected_data[selected_data['Product'] == label]
+   
+    # Train an ARIMA model using the selected data (you can choose a different model as needed)
+    model = ARIMA(product_data['Qty'], order=(1, 0, 0))
+    model_fit = model.fit(disp=0)
+   
+    # Make predictions for the next time point (1 month ahead)
+    forecast, stderr, conf_int = model_fit.forecast(steps=1)
+   
+    # Calculate the percentage change
+    previous_sales = product_data['Qty'].iloc[-1]
+    percentage_change = ((forecast - previous_sales) / previous_sales) * 100
+   
+    # Store the sales percentage change in the dictionary
+    percentage_changes[label] = percentage_change
+   
+    # Generate detailed sales data commentary
+    detailed_commentary[label] = []
+    for index, row in product_data.iterrows():
+        date = row['Date']
+        sales = row['Qty']
+        detailed_commentary[label].append(f"On {date}, {label} sales reached {sales} units.")
+
+# Generate and print the sales percentage change commentary
+percentage_commentary = f"Sales data commentary:\n"
+percentage_commentary += f"Date Range: {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')}\n"
+if user_input_labels:
+    percentage_commentary += f"Labels or Products: {', '.join(selected_labels)}\n\n"
+
+for label, change in percentage_changes.items():
+    percentage_commentary += f"Sales for {label} "
+    percentage_commentary += f"from {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')} "
+    percentage_commentary += f"{('increased' if change > 0 else 'decreased' if change < 0 else 'remained stable')} "
+    percentage_commentary += f"by {abs(change):.2f}%.\n"
+
+print(percentage_commentary)
+
+# Generate and print the detailed sales data commentary
+for label, commentary in detailed_commentary.items():
+    detailed_commentary_text = f"Sales data commentary:\n"
+    detailed_commentary_text += f"Date Range: {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')}\n"
+    detailed_commentary_text += f"Labels or Products: {label}\n\n"
+    detailed_commentary_text += "Here is the sales data commentary based on your selection:\n"
+   
+    for entry in commentary:
+        detailed_commentary_text += f"{entry}\n"
+   
+    print(detailed_commentary_text)
