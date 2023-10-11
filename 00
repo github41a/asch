@@ -1,149 +1,291 @@
-import pandas as pd
-import numpy as np
-from statsmodels.tsa.arima_model import ARIMA
+Skip to content
+Tuts Make
 
-# Define the input data as a pandas DataFrame
-data = {
-    'ID': ['ID07351', 'ID07352', 'ID07353', 'ID07354', 'ID07355', 'ID07356', 'ID07357', 'ID07358', 'ID07359', 'ID07360',
-           'ID07361', 'ID07362', 'ID07363'],
-    'Date': ['1-Jan-2022', '4-Jan-2022', '7-Jan-2022', '10-Jan-2022', '13-Jan-2022', '16-Jan-2022', '19-Jan-2022', '22-Jan-2022', '25-Jan-2022', '28-Jan-2022', '31-Jan-2022', '3-Feb-2022', '6-Feb-2022'],
-    'Region': ['East', 'East', 'West', 'East', 'East', 'East', 'East', 'West', 'East', 'East', 'East', 'East', 'East'],
-    'City': ['Boston', 'Boston', 'Los Angeles', 'New York', 'Boston', 'Boston', 'Boston', 'Los Angeles', 'New York', 'New York', 'Boston', 'Boston', 'Boston'],
-    'Category': ['Bars', 'Crackers', 'Cookies', 'Cookies', 'Cookies', 'Bars', 'Crackers', 'Bars', 'Bars', 'Snacks', 'Cookies', 'Cookies', 'Crackers'],
-    'Product': ['Carrot', 'Whole Wheat', 'Chocolate Chip', 'Chocolate Chip', 'Arrowroot', 'Carrot', 'Whole Wheat', 'Carrot', 'Carrot', 'Potato Chips', 'Arrowroot', 'Chocolate Chip', 'Whole Wheat'],
-    'Qty': [33, 87, 58, 82, 38, 54, 149, 51, 100, 28, 36, 31, 28],
-    'UnitPrice': [1.77, 3.49, 1.87, 1.87, 2.18, 1.77, 3.49, 1.77, 1.77, 1.35, 2.18, 1.87, 3.49],
-    'TotalPrice': [58.41, 303.63, 108.46, 153.34, 82.84, 95.58, 520.01, 90.27, 177, 37.8, 78.48, 57.97, 97.72]
+Tutorials Maker
+
+Main NavigationMENU
+Angular 14 Fetch/Get Data from API and Display in Table
+Angular 14 Fetch/Get Data from API and Display in Table
+November 26, 2022 By Admin Leave a Commenton Angular 14 Fetch/Get Data from API and Display in Table
+Angular 14 fetch/get data from API and display in html; In this tutorial, you will learn how to get/fetch data from APIs and display it in the html table in angular 14 apps.
+
+How to Fetch Data from API and Display HTML Table in Angular 14
+Use the following steps to get/fetch data from APIs and display it in the table in angular 14 apps:
+
+Step 1 – Create New Angular App
+Step 2 – Import HTTP Modules
+Step 3 – Create List Html in View File
+Step 4 – Create Services For Api
+Step 5 – Use Api Services in Component
+Step 6 – Start Angular App
+Step 1 – Create New Angular App
+First of all, open your terminal and execute the following command on it to install angular app:
+
+ng new my-new-app
+Step 2 – Import Modules
+Visit src/app directory and open app.module.ts file. Then import modules into it; as follows:
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+  
+import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+  
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+Step 3 – Create List Html in View File
+Create simple html for displaying a list using api services in angular apps. So, visit src/app/app.component.html and update the following code into it:
+
+<h1>Angular 14 HttpClient for Sending Http Request Example - Tutsmake.com</h1>
+  
+<ul class="list-group">
+  <li 
+      *ngFor="let post of posts"
+      class="list-group-item">
+      {{ post.title }}
+  </li>
+</ul>
+Step 4 – Create Service for Api
+Open a terminal and execute the following command into it to create service for http client request; as follows:
+
+ng g s services/post
+Then visit the src/app/ directory and open post.service.ts. Then add the following code into post.service.ts file:
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+  
+@Injectable({
+  providedIn: 'root'
+})
+export class PostService {
+  private url = 'http://jsonplaceholder.typicode.com/posts';
+   
+  constructor(private httpClient: HttpClient) { }
+  
+  getPosts(){
+    return this.httpClient.get(this.url);
+  }
+  
+}
+Step 5 – Use Api Services in Component
+Visit the src/app directory and open app.component.ts. Then add the following code into component.ts file:
+
+import { Component, OnInit } from '@angular/core';
+import { PostService } from './services/post.service';
+  
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  posts:any;
+  
+  constructor(private service:PostService) {}
+  
+  ngOnInit() {
+      this.service.getPosts()
+        .subscribe(response => {
+          this.posts = response;
+        });
+  }
 }
 
-# Extend the data with additional records for 2023, 2022, and 2021
-additional_data = {
-    'ID': ['ID07364', 'ID07365', 'ID07366', 'ID07367', 'ID07368', 'ID07369'],
-    'Date': ['1-Jan-2023', '4-Jan-2023', '7-Jan-2023', '10-Jan-2023', '13-Jan-2023', '16-Jan-2023'],
-    'Region': ['East', 'East', 'West', 'East', 'East', 'East'],
-    'City': ['Boston', 'Boston', 'Los Angeles', 'New York', 'Boston', 'Boston'],
-    'Category': ['Cookies', 'Bars', 'Snacks', 'Bars', 'Cookies', 'Cookies'],
-    'Product': ['Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot', 'Arrowroot', 'Chocolate Chip'],
-    'Qty': [72, 44, 58, 61, 39, 75],
-    'UnitPrice': [1.87, 1.77, 1.35, 1.77, 2.18, 1.87],
-    'TotalPrice': [134.64, 78.28, 78.3, 108.57, 85.02, 140.25]
-}
+Step 6 – Start Angular App
+In this step, execute the following commands on terminal to start angular app:
 
-# Append the additional data to the existing DataFrame
-extended_data = pd.DataFrame(data)
-extended_data = extended_data.append(additional_data, ignore_index=True)
+ng serve
+Open your web browser, type the given URL into it: as follows:
 
-# Define additional data for 2022
-additional_data_2022 = {
-    'ID': ['ID07370', 'ID07371', 'ID07372', 'ID07373', 'ID07374'],
-    'Date': ['1-Jan-2022', '4-Jan-2022', '7-Jan-2022', '10-Jan-2022', '13-Jan-2022'],
-    'Region': ['West', 'West', 'East', 'East', 'West'],
-    'City': ['Los Angeles', 'Los Angeles', 'New York', 'New York', 'Los Angeles'],
-    'Category': ['Snacks', 'Cookies', 'Bars', 'Snacks', 'Bars'],
-    'Product': ['Potato Chips', 'Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot'],
-    'Qty': [62, 46, 74, 56, 68],
-    'UnitPrice': [1.35, 1.87, 1.77, 1.35, 1.77],
-    'TotalPrice': [83.7, 85.82, 130.98, 75.6, 120.36]
-}
+http://localhost:4200
+Conclusion
+In this tutorial, you have learned how to get/fetch data from APIs and display it in the table in angular 14 apps.
 
-# Append the additional data for 2022
-extended_data = extended_data.append(additional_data_2022, ignore_index=True)
+Recommended Angular Tutorials
+Update Angular Version to 14
+Install Bootstrap 5 in Angular 14
+Angular 14 Reactive Forms Validation Example
+Angular 14 Bootstrap Modal Popup Example
+Angular 14 Services Example Tutorial
+Angular 14 Material Datepicker Example
+Angular 14 Image Upload with Preview Example
+Angular 14 File Upload Example
+Angular 14 CRUD Example with Web API
+Angular 14 FullCalendar Dynamic Events Example
+Angular 14 Multiple Image Upload with Preview Example
+10 Digit Mobile Number Validation in Angular 14
+10 Digit Mobile Number Validation in Angular 14
+Angular 14 Regex Validate URL with Reactive Forms Example
+Angular 14 Image Crop, Zoom, Scale, Preview and Upload
+Export Data to Excel in Angular 14
+Angular 14 Bootstrap 5 Carousel Example
+Angular 14 Bootstrap 5 Carousel Example
+Angular 14 Google Places Autocomplete
+Owl Carousel In Angular 14
+Angular 14 Toastr Notifications Example
+Angular 14 Google Social Login/SignIn Example
+Angular 14 Datatable Print, Export to CSV, Excel Data
+Angular 14 Facebook OAuth Social Login Tutorial
+Angular 14 Select Dropdown Example
+Angular 14 Sweetalert2 Example
+Angular 14 Pie Chart Using Chart JS Example
+Angular 14 Bar Chart Example
+Angular 14 Bubble Chart Example
+Angular 14 Line Chart Example
+Angular 14 Line Chart Example
+Angular 14 Display JSON Data in Table Tutorial
+Angular 14 dynamically add and remove CSS Classes using ngClass and custom directive
+Angular search filter array of objects
+Angular 14 Doughnut Chart Example Tutorial
+Angular 14 Slick Carousel/Slider Integration Tutorial
+Angular 14 PDF Viewer Example Tutorial
+Angular 14 Star ⭐ Rating System Examples Tutorial
+Angular 14 File upload example with Progress bar & Bootstrap
+Angular 14 Lazy Load Images Example
+Angular 14 Stripe Card Payment Gateway Example
+Angular 14 Copy to Clipboard Example Tutorial
+Angular 14 Radar Chart Example Tutorial
+Angular 14 Get Selected Radio Button Value
+Angular 14 Get Current Location Latitude and Longitude
+Angular 14 Swiper Image Touch Slider Example Tutorial
+Angular 14 Swiper Image Touch Slider Example Tutorial
+Angular 14 Google Maps Integration Example Tutorial
+Angular 14 + Node JS Express MySQL CRUD Example
+Angular 14 + Node.js Express + MongoDB example: CRUD App
+Filed Under: Angular, REST API
+Tagged With: Get Data from API and Display in Angular
 
-# Define additional data for 2021
-additional_data_2021 = {
-    'ID': ['ID07375', 'ID07376', 'ID07377', 'ID07378', 'ID07379'],
-    'Date': ['1-Jan-2021', '4-Jan-2021', '7-Jan-2021', '10-Jan-2021', '13-Jan-2021'],
-    'Region': ['West', 'West', 'East', 'East', 'West'],
-    'City': ['Los Angeles', 'Los Angeles', 'New York', 'New York', 'Los Angeles'],
-    'Category': ['Snacks', 'Cookies', 'Bars', 'Snacks', 'Bars'],
-    'Product': ['Potato Chips', 'Chocolate Chip', 'Carrot', 'Potato Chips', 'Carrot'],
-    'Qty': [70, 48, 78, 60, 70],
-    'UnitPrice': [1.35, 1.87, 1.77, 1.35, 1.77],
-    'TotalPrice': [94.5, 89.76, 138.06, 81.0, 123.9]
-}
+AuthorAdmin
+My name is Devendra Dode. I am a full-stack developer, entrepreneur, and owner of Tutsmake.com. I like writing tutorials and tips that can help other developers. I share tutorials of PHP, Python, Javascript, JQuery, Laravel, Livewire, Codeigniter, Node JS, Express JS, Vue JS, Angular JS, React Js, MySQL, MongoDB, REST APIs, Windows, Xampp, Linux, Ubuntu, Amazon AWS, Composer, SEO, WordPress, SSL and Bootstrap from a starting stage. As well as demo example.
 
-# Append the additional data for 2021
-extended_data = extended_data.append(additional_data_2021, ignore_index=True)
+View all posts by Admin
 
-# Prompt the user to specify the start and end dates for analysis
-start_date_input = input("Enter the start date for analysis (e.g., '2023-09-01'): ")
-end_date_input = input("Enter the end date for analysis (e.g., '2023-10-08'): ")
+Post navigation
+PREVIOUS
+Previous post:How to Install Material Theme in Angular 14
+NEXT
+Next post:Angular 13/14 – property ‘name’ comes from an index signature, so it must be accessed with [‘required’]
+Leave a Reply
+Your email address will not be published. Required fields are marked *
 
-# Convert the user input to datetime objects
-start_date = pd.to_datetime(start_date_input)
-end_date = pd.to_datetime(end_date_input)
+Comment * 
 
-# Filter data for the specified date range
-selected_data = extended_data[(extended_data['Date'] >= start_date) & (extended_data['Date'] <= end_date)]
+Name * 
+Email * 
+Website 
+ Save my name, email, and website in this browser for the next time I comment.
 
-# Prompt the user to specify labels or products
-user_input_labels = input("Enter labels or products (comma-separated) you want to analyze, or leave empty for all: ")
+Primary Sidebar
+Search for:
+Search
+SEARCH
+Ezoic
+Support Us
+Tools
+JSON Formatter Online
+Word & Character Counter Online
+Compare Code & Text Files Online
+Youtube Video Downloader
 
-# Filter data for the specified labels or products
-if user_input_labels:
-    selected_labels = [label.strip() for label in user_input_labels.split(',')]
-    selected_data = selected_data[selected_data['Product'].isin(selected_labels)]
 
-# Create lag features for previous sales data
-selected_data['Sales_Lag1'] = selected_data.groupby('Product')['Qty'].shift(1)
-selected_data['Sales_Lag2'] = selected_data.groupby('Product')['Qty'].shift(2)
 
-# Drop missing values resulting from lag calculations
-selected_data = selected_data.dropna()
 
-# Initialize a dictionary to store sales percentage changes
-percentage_changes = {}
 
-# Initialize a dictionary to store detailed sales data commentary
-detailed_commentary = {}
 
-# Iterate over selected labels or products
-for label in selected_data['Product'].unique():
-    product_data = selected_data[selected_data['Product'] == label]
-   
-    # Train an ARIMA model using the selected data (you can choose a different model as needed)
-    model = ARIMA(product_data['Qty'], order=(1, 0, 0))
-    model_fit = model.fit(disp=0)
-   
-    # Make predictions for the next time point (1 month ahead)
-    forecast, stderr, conf_int = model_fit.forecast(steps=1)
-   
-    # Calculate the percentage change
-    previous_sales = product_data['Qty'].iloc[-1]
-    percentage_change = ((forecast - previous_sales) / previous_sales) * 100
-   
-    # Store the sales percentage change in the dictionary
-    percentage_changes[label] = percentage_change
-   
-    # Generate detailed sales data commentary
-    detailed_commentary[label] = []
-    for index, row in product_data.iterrows():
-        date = row['Date']
-        sales = row['Qty']
-        detailed_commentary[label].append(f"On {date}, {label} sales reached {sales} units.")
 
-# Generate and print the sales percentage change commentary
-percentage_commentary = f"Sales data commentary:\n"
-percentage_commentary += f"Date Range: {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')}\n"
-if user_input_labels:
-    percentage_commentary += f"Labels or Products: {', '.join(selected_labels)}\n\n"
 
-for label, change in percentage_changes.items():
-    percentage_commentary += f"Sales for {label} "
-    percentage_commentary += f"from {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')} "
-    percentage_commentary += f"{('increased' if change > 0 else 'decreased' if change < 0 else 'remained stable')} "
-    percentage_commentary += f"by {abs(change):.2f}%.\n"
 
-print(percentage_commentary)
 
-# Generate and print the detailed sales data commentary
-for label, commentary in detailed_commentary.items():
-    detailed_commentary_text = f"Sales data commentary:\n"
-    detailed_commentary_text += f"Date Range: {start_date.strftime('%d-%b-%Y')} to {end_date.strftime('%d-%b-%Y')}\n"
-    detailed_commentary_text += f"Labels or Products: {label}\n\n"
-    detailed_commentary_text += "Here is the sales data commentary based on your selection:\n"
-   
-    for entry in commentary:
-        detailed_commentary_text += f"{entry}\n"
-   
-    print(detailed_commentary_text)
+
+Ezoic
+Recent Posts
+Node js Get Form Data from Postman Tutorial
+Composer is not recognized as an internal or external command
+Fixed: the zip extension and unzip/7z commands are both missing xampp windows
+Angular 16 Bar Chart Tutorial
+Angular 16 Install & Setup Material Theme Tutorial
+Categories
+Ajax
+Angular
+Apache
+AWS
+Bash Shell
+Best Free SEO Tools
+Bootstrap
+C
+CentOS
+Codeigniter
+Composer
+CURL
+Django
+Flask
+Git (Github)
+Go (Golang)
+Java
+Javascript
+Jquery
+Laravel
+Linux
+MacOS
+Mongodb
+MySQL
+NGINX
+Node js
+PHP
+Python
+React
+REST API
+SEO
+SQLite
+SSL Certificate
+Technology
+Ubuntu
+Uncategorized
+Vue
+Windows
+Wordpress
+Xampp
+Ad
+
+Recent Comments
+amit on 95+ Free Guest Posting & Blogging Sites 2023 – 2024
+Matty P on Laravel 10 Vue 3 JS Router Tutorial
+Ben on How to Fix XAMPP MySQL not starting on Windows 11|10
+leo cai on Node js Express Login with MySQL Example
+Ifeanyi Nnaemego on Get Nearest Location in Laravel 10 using Latitude and Longitude
+Ad
+
+Tags
+Autocomplete Jquery Ui Search in laravel Autocomplete Search using Typeahead Js in laravel Create REST Api using Laravel Passport Datatables Custom Filter In Laravel How-to-Install Laravel on Windows with Composer how to find and delete duplicate records in mysql How to Import Export Excel in Laravel How to Install Apache in Ubuntu 18.04 How to Laravel Image Upload in Database How to Make User Login and Registration Laravel How to Send Mail in Laravel Install PHP in Ubuntu from Scratch Laravel 5 Send Email Example laravel autocomplete search jquery ajax Laravel Create Update Delete Example Laravel Crud Project With MySQL Database Laravel DataTable Ajax Crud Tutorial Laravel File Upload Via API Using Postman Laravel Google ReCaptcha Form Validation Laravel Import Excel to Database Laravel Import Export Excel to Database Example Laravel jQuery Ajax Categories and Subcategories Select Dropdown Laravel jQuery Ajax Post Form With Validation Laravel Login Authentication Using Email Tutorial Laravel Mail Send with Example Laravel Middleware Tutorial From Scratch Laravel Passport - Create REST API with authentication Laravel PHP Ajax Form Submit Without Refresh Page Laravel Send Email with Example Laravel Send Mail From Localhost Laravel Tutorial Import Export Excel & Csv to Database Laravel Upload Image Using Ajax Tutorial Mail Send in Laravel with Example mysql find and remove duplicate rows mysql find duplicate rows MySQL Find Duplicate Rows and Delete mysql query to find duplicate rows in a table PHP Laravel Simple Qr Code Generate Example Quick Install Laravel On Windows With Composer Remove First Character from String PHP Sending Email Via Gmail SMTP Server In Laravel Send Mail PHP Laravel Example Step by Step Guide to Building Your First Laravel Application Stripe Payement Gateway Integration in Laravel Upload Multiple Images in Laravel
+Ad
+
+Ezoic
+Footer Widgets
+Ad
+
+Ezoic
+Footer Menu
+Home
+About Us
+Contact Us
+Advertise With Us
+Privacy Policy
+Article/Post Contribution Guidelines
+Sitemap
+RS Chat
+Donate
+Copyright © Tuts Make . All rights reserved.
+
+ezoic
+
+notification icon
