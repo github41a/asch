@@ -1,1 +1,55 @@
-I want to express my gratitude for your unwavering support in ML Use Case 1. Your belief in us and encouragement to explore various ML modules have been instrumental in our progress. Thanks to each one of you for this opportunity, which will benefit the entire Barclays finance area. I also extend my appreciation to Rizwan sir, Deepak sir, and Gaurav sir for their belief in me and their continuous encouragement to enhance our use case's UI. Your support and guidance have been key to our progress.
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <div class="dot-container">
+      <div class="dot gray"></div>
+      <div class="dot gray"></div>
+      <div class="dot gray"></div>
+      <div class="dot gray"></div>
+    </div>
+  </body>
+</html>
+
+
+
+.dot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  background-color: gray;
+  border-radius: 50%;
+  margin: 0 10px;
+  transition: background-color 1s;
+}
+
+.gray:nth-child(1) {
+  animation: changeColor 3s linear 0s 1 forwards;
+}
+
+.gray:nth-child(2) {
+  animation: changeColor 3s linear 1s 1 forwards;
+}
+
+.gray:nth-child(3) {
+  animation: changeColor 3s linear 2s 1 forwards;
+}
+
+.gray:nth-child(4) {
+  animation: changeColor 3s linear 3s 1 forwards;
+}
+
+@keyframes changeColor {
+  to {
+    background-color: #3498db; /* Sky blue color */
+  }
+}
