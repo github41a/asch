@@ -1,25 +1,16 @@
-Subject: Leave Application due to Viral Fever, Low WBC Count, and Request for Possible Extension
+document.addEventListener('DOMContentLoaded', function () {
+    const disableUploadCheckbox = document.getElementById('disableUpload');
+    const uploadButton = document.getElementById('uploadButton');
+    const fileInput = document.getElementById('fileInput');
 
-Dear [Supervisor's Name],
-
-I hope this email finds you well. I am writing to formally request a medical leave of absence from work due to being diagnosed with viral fever and experiencing severe weakness. I would like to inform you that my medical condition is further complicated by a low white blood cell (WBC) count and an imbalance in Neutrophils and Lymphocytes, which make me more susceptible to infections.
-
-I kindly request a leave for an initial period of 2-3 days, and I would like to extend it if my health does not improve within this timeframe. Given my medical condition, my healthcare provider has recommended this period for rest and recovery.
-
-I have attached my medical certificate from my healthcare provider, which outlines the seriousness of my condition and the need for immediate rest. The doctor has stressed that my WBC count and blood parameters are not within the normal range, making me more vulnerable to infections.
-
-If my health does not improve within the initial 2-3 day period, I will be in touch with you to discuss the possibility of extending my leave. I am fully committed to keeping you updated about my progress and providing a realistic return date based on my recovery.
-
-During my absence, I will ensure that all my pending work is either completed or delegated to a colleague to minimize any disruptions. I will be available via email for any urgent matters that require my attention and support.
-
-I kindly request your understanding and support during this challenging time. I appreciate your consideration of my request. If there are any additional steps or documentation required, please do not hesitate to let me know.
-
-Thank you for your understanding and your support during my recovery.
-
-Sincerely,
-
-[Your Name]
-[Your Employee ID]
-[Your Contact Information]
-
-[Attach Medical Certificate] (if not provided separately)
+    // Listen for checkbox change
+    disableUploadCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            uploadButton.disabled = true;
+            fileInput.disabled = true;
+        } else {
+            uploadButton.disabled = false;
+            fileInput.disabled = false;
+        }
+    });
+});
