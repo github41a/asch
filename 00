@@ -9,25 +9,23 @@
 <body>
     <div class="checkbox-container">
         <input type="checkbox" id="enableUpload" class="checkbox-input">
-        <label for="enableUpload" class="checkbox-label">Enable Upload</label>
+        <label for "enableUpload" class="checkbox-label">Enable Upload</label>
     </div>
     <div class="file-upload-container">
         <button id="fileUploadButton" class="upload-button" disabled>Upload File</button>
     </div>
-    <script src="script.js"></script>
+    
+    <script>
+        const enableUploadCheckbox = document.getElementById('enableUpload');
+        const fileUploadButton = document.getElementById('fileUploadButton');
+
+        enableUploadCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                fileUploadButton.disabled = false;
+            } else {
+                fileUploadButton.disabled = true;
+            }
+        });
+    </script>
 </body>
 </html>
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    const enableUploadCheckbox = document.getElementById('enableUpload');
-    const fileUploadButton = document.getElementById('fileUploadButton');
-
-    enableUploadCheckbox.addEventListener('change', function () {
-        if (this.checked) {
-            fileUploadButton.disabled = false;
-        } else {
-            fileUploadButton.disabled = true;
-        }
-    });
-});
