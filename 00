@@ -1,16 +1,49 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const disableUploadCheckbox = document.getElementById('disableUpload');
-    const uploadButton = document.getElementById('uploadButton');
-    const fileInput = document.getElementById('fileInput');
+.custom-checkbox {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
 
-    // Listen for checkbox change
-    disableUploadCheckbox.addEventListener('change', function () {
-        if (this.checked) {
-            uploadButton.disabled = true;
-            fileInput.disabled = true;
-        } else {
-            uploadButton.disabled = false;
-            fileInput.disabled = false;
-        }
-    });
-});
+.custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border: 1px solid #777;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: #007BFF;
+    border: 1px solid #007BFF;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
