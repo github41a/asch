@@ -1,46 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-  </head>
-  <body>
-    <button id="showButton">Show Loading</button>
-    <div id="overlay" class="overlay"></div>
-    <div id="loading" class="loading">
-      Loading...
-    </div>
-  </body>
-  <script src="script.js"></script>
-</html>
+Subject: Leave Application due to Viral Fever, Low WBC Count, and Request for Possible Extension
 
+Dear [Supervisor's Name],
 
-.overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Background with lowered opacity */
-}
+I hope this email finds you well. I am writing to formally request a medical leave of absence from work due to being diagnosed with viral fever and experiencing severe weakness. I would like to inform you that my medical condition is further complicated by a low white blood cell (WBC) count and an imbalance in Neutrophils and Lymphocytes, which make me more susceptible to infections.
 
-.loading {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-}
+I kindly request a leave for an initial period of 2-3 days, and I would like to extend it if my health does not improve within this timeframe. Given my medical condition, my healthcare provider has recommended this period for rest and recovery.
 
+I have attached my medical certificate from my healthcare provider, which outlines the seriousness of my condition and the need for immediate rest. The doctor has stressed that my WBC count and blood parameters are not within the normal range, making me more vulnerable to infections.
 
-const showButton = document.getElementById("showButton");
-const overlay = document.getElementById("overlay");
-const loading = document.getElementById("loading");
+If my health does not improve within the initial 2-3 day period, I will be in touch with you to discuss the possibility of extending my leave. I am fully committed to keeping you updated about my progress and providing a realistic return date based on my recovery.
 
-showButton.addEventListener("click", () => {
-  overlay.style.display = "block"; // Show the overlay with lowered opacity
-  loading.style.display = "block"; // Show the loading button
-});
+During my absence, I will ensure that all my pending work is either completed or delegated to a colleague to minimize any disruptions. I will be available via email for any urgent matters that require my attention and support.
+
+I kindly request your understanding and support during this challenging time. I appreciate your consideration of my request. If there are any additional steps or documentation required, please do not hesitate to let me know.
+
+Thank you for your understanding and your support during my recovery.
+
+Sincerely,
+
+[Your Name]
+[Your Employee ID]
+[Your Contact Information]
+
+[Attach Medical Certificate] (if not provided separately)
