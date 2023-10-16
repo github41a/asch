@@ -3,29 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkbox Control</title>
+    <title>Centered Popup</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="checkbox-container">
-        <input type="checkbox" id="enableUpload" class="checkbox-input">
-        <label for "enableUpload" class="checkbox-label">Enable Upload</label>
+    <button id="openPopupButton">Open Popup</button>
+    <div class="popup" id="popup">
+        <button id="closePopupButton">Close</button>
+        <div class="content">
+            <textarea></textarea>
+        </div>
     </div>
-    <div class="file-upload-container">
-        <button id="fileUploadButton" class="upload-button" disabled>Upload File</button>
-    </div>
-    
-    <script>
-        const enableUploadCheckbox = document.getElementById('enableUpload');
-        const fileUploadButton = document.getElementById('fileUploadButton');
-
-        enableUploadCheckbox.addEventListener('change', function () {
-            if (this.checked) {
-                fileUploadButton.disabled = false;
-            } else {
-                fileUploadButton.disabled = true;
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.popup button#closePopupButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.popup .content textarea {
+    width: 100%;
+    height: 200px;
+}
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const openButton = document.getElementById('openPopupButton');
+    const popup = document.getElementById('popup');
+    const closeButton = document.getElementById('closePopupButton');
+
+    openButton.addEventListener('click', function () {
+        popup.style.display = 'block';
+    });
+
+    closeButton.addEventListener('click', function () {
+        popup.style.display = 'none';
+    });
+});
