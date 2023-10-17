@@ -10,3 +10,30 @@ $(document).ready(function(){
         }
     });
 });
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enable File Input with Checkbox</title>
+</head>
+<body>
+    <input type="checkbox" class="checkbox-input" id="checkme"/>
+    <input type="file" id="fileInput" class="upload-button" value="send" disabled accept=".xlsx,.csv,.xml">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var checker = $("#checkme"),
+                sendBtn = $("#fileInput");
+
+            checker.change(function(){
+                if (checker.is(":checked")) {
+                    sendBtn.prop("disabled", false);
+                } else {
+                    sendBtn.prop("disabled", true);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
