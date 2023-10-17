@@ -1,39 +1,72 @@
-$(document).ready(function(){
-    var checker = $("#checkme"),
-        sendBtn = $("#fileInput");
-
-    checker.change(function(){
-        if (checker.is(":checked")) {
-            sendBtn.prop("disabled", false);
-        } else {
-            sendBtn.prop("disabled", true);
-        }
-    });
-});
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Enable File Input with Checkbox</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Example</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <input type="checkbox" class="checkbox-input" id="checkme"/>
-    <input type="file" id="fileInput" class="upload-button" value="send" disabled accept=".xlsx,.csv,.xml">
+    <button id="openModal">Open Modal</button>
+    
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Modal Header</h2>
+            <p>This is some modal content.</p>
+        </div>
+    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            var checker = $("#checkme"),
-                sendBtn = $("#fileInput");
-
-            checker.change(function(){
-                if (checker.is(":checked")) {
-                    sendBtn.prop("disabled", false);
-                } else {
-                    sendBtn.prop("disabled", true);
-                }
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+document.getElementById("openModal").addEventListener("click", function() {
+    document.getElementById("myModal").style.display = "block";
+});
+
+document.getElementById("closeModal").addEventListener("click", function() {
+    document.getElementById("myModal").style.display = "none";
+});
+
+window.addEventListener("click", function(event) {
+    if (event.target === document.getElementById("myModal")) {
+        document.getElementById("myModal").style.display = "none";
+    }
+});
