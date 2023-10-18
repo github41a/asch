@@ -1,12 +1,12 @@
-Here's a structured point for your work in Java API Development:
+Certainly, here are additional points for your Java API Development work, including the "I did this" and "this project is in the initial stage, so working on it" elements:
 
-**What I Did (Accomplishment/Action):**
+**What I Did (Accomplishments/Actions):**
 
 1. **Java API Development - Controls Data Store API POC:**
-   - Worked on the development of the Controls Data Store API Proof of Concept (POC).
-   - Developed APIs for Risk and Controls data retrieval from our Controls Data Store.
-   - Built the API to segregate requests from different domains and maintain tracking.
-   - Included authorization and authentication for BAM (Business Activity Monitoring).
-   - Actively involved in the ongoing development of this project, contributing to its progress.
+   - I actively contributed to the development of the Controls Data Store API Proof of Concept (POC).
+   - I played a key role in designing and building APIs for Risk and Controls data retrieval from our Controls Data Store.
+   - I implemented features to segregate incoming requests from different domains and established a robust tracking mechanism.
+   - I integrated authorization and authentication for BAM (Business Activity Monitoring) to enhance security.
+   - Currently, this project is in its initial stage, and I'm actively working on its development, focusing on its growth and success.
 
-This format highlights your specific accomplishments and contributions in the Java API development project.
+These points showcase your active involvement in the Java API development project, including your contributions and the ongoing work on this project in its initial stage.
