@@ -1,12 +1,16 @@
-Certainly, here are additional points for your Java API Development work, including the "I did this" and "this project is in the initial stage, so working on it" elements:
+Here are structured points for your involvement in the ML project and the TCO migration:
 
 **What I Did (Accomplishments/Actions):**
 
-1. **Java API Development - Controls Data Store API POC:**
-   - I actively contributed to the development of the Controls Data Store API Proof of Concept (POC).
-   - I played a key role in designing and building APIs for Risk and Controls data retrieval from our Controls Data Store.
-   - I implemented features to segregate incoming requests from different domains and established a robust tracking mechanism.
-   - I integrated authorization and authentication for BAM (Business Activity Monitoring) to enhance security.
-   - Currently, this project is in its initial stage, and I'm actively working on its development, focusing on its growth and success.
+1. **ML US 1 - Automatic Summary Generation:**
+   - I recognized a significant problem where executives manually interpreted vast amounts of structured financial data.
+   - Identified the need for a non-rule based automatic summary generation solution.
+   - Actively contributed to the development of ML algorithms to understand and handle data for generating meaningful textual summaries.
+   - Developed the entire user interface (UI) for this solution using Angular, enhancing user experience.
 
-These points showcase your active involvement in the Java API development project, including your contributions and the ongoing work on this project in its initial stage.
+2. **TCO Migration to Angular and MySQL:**
+   - Led the migration of TCO Applications from Python to Angular.
+   - Focused on upgrading the technology stack for language support and improved real-time user experience.
+   - The development process is currently in progress, aimed at reducing customer efforts and ensuring the latest language features.
+
+These points highlight your contributions to both the ML project and the TCO migration, emphasizing your problem-solving skills and your active involvement in ongoing development.
