@@ -1,17 +1,20 @@
-Certainly, here's a structured point that combines "What I Did" and "How I Did It" for your involvement in the AXIOM BOE GTB project deliverables:
+Certainly, here's a concise summary with 3 to 4 points that capture all the information:
 
-**What I Did (Accomplishments/Actions):**
+1. **Unix Environment Sync Utility:**
+   - Developed an automated solution for comparing and synchronizing files in Unix servers.
 
-- Actively engaged in the delivery of AXIOM BOE/BANK OF ENGLAND REPORTING in accordance with the agreed plan and Book of Work (BOW).
-- Played a key role in the onboarding of GTB data for the Banking Book as part of the GTB BOW.
-- Focused on ensuring service stability and resilience by handling production issue execution batch runs.
-- Worked on making different working areas, including UAT, DEV, and OAT, synchronize effectively and conducted sanity checks.
-- Primarily dedicated to managing and resolving production issues, ensuring seamless project execution.
+2. **ML US 1 - Automatic Commentary Generation:**
+   - Identified the need for a non-rule based automatic summary generation solution.
+   - Actively contributed to the development of ML algorithms and API for data retrieval.
+   - Developed the entire user interface (UI) using Angular for an enhanced user experience.
 
-**How I Did It (Methodology):**
+3. **TCO Migration to Angular and MySQL:**
+   - Led the migration of TCO Applications from Python to Angular, focusing on language support and real-time user experience.
+   - The development process is currently in progress, aimed at reducing customer efforts and implementing the latest language features.
 
-- Promoted open communication and collaboration among team members for effective issue resolution.
-- Leveraged in-depth knowledge and expertise to onboard GTB data for the Banking Book.
-- Ensured service stability and resilience through meticulous handling of production issues and batch runs.
-- Facilitated synchronization between various working areas, performing sanity checks to validate system integrity.
-- Demonstrated problem-solving skills and quick decision-making in managing and resolving production issues efficiently.
+4. **Java API Development - Controls Data Store API POC:**
+   - Actively contributed to the API development for the Controls Data Store API Proof of Concept (POC).
+   - Designed and built APIs for data retrieval, implementing features to segregate incoming requests and establish tracking.
+   - Currently in the initial stage, actively working on its development to ensure growth and success.
+
+These concise points cover your accomplishments and contributions in various projects.
