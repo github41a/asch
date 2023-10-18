@@ -1,72 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modal Example</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <button id="openModal">Open Modal</button>
-    
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <h2>Modal Header</h2>
-            <p>This is some modal content.</p>
-        </div>
-    </div>
+Certainly, here are the sentences for each of the tasks you listed, demonstrating how you might express that you've completed them:
 
-    <script src="script.js"></script>
-</body>
-</html>
+1. "I ensure that I am well-informed about the risks associated with my work and the processes I manage. I'm familiar with our company's policies and standards, and I stay up to date with relevant regulations."
 
+2. "When I create new business processes, I document them meticulously, highlighting potential risks and detailing the controls in place to mitigate them. This ensures transparency and effective risk management."
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
+3. "I consistently complete all mandatory training on time, ensuring I have the necessary knowledge and skills to operate within our company's guidelines."
 
-.modal-content {
-    background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 50%;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    text-align: center;
-}
+4. "I actively seek ways to simplify and improve existing processes, making them more efficient and strengthening controls to reduce risks where possible."
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+5. "I take proactive measures to address identified areas that need improvement in our processes and controls. I believe in continuous improvement and am dedicated to making necessary changes."
 
-.close:hover {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-
-document.getElementById("openModal").addEventListener("click", function() {
-    document.getElementById("myModal").style.display = "block";
-});
-
-document.getElementById("closeModal").addEventListener("click", function() {
-    document.getElementById("myModal").style.display = "none";
-});
-
-window.addEventListener("click", function(event) {
-    if (event.target === document.getElementById("myModal")) {
-        document.getElementById("myModal").style.display = "none";
-    }
-});
+6. "I make it a point to recognize and appreciate my colleagues who diligently follow and contribute to strengthening controls. This positive reinforcement fosters a culture of accountability and risk awareness within our team."
