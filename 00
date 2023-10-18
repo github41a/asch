@@ -1,28 +1,12 @@
-Great, let's structure the "How I Did It" and "What Are the Benefits" sections into a point-wise format:
+Here's a structured point for your work in Java API Development:
 
-**How I Did It (Methodology):**
+**What I Did (Accomplishment/Action):**
 
-1. **Validating Method Selection (MD5 vs. SHA256):**
-   - Faced the challenge of choosing between MD5 and SHA256 for hashing.
-   - Devoted extensive time and resources to determine the optimal hashing method.
-   - Conducted thorough analysis, considering all potential scenarios for hash generation.
-   - Ensured accuracy and reliability of hashing reports.
+1. **Java API Development - Controls Data Store API POC:**
+   - Worked on the development of the Controls Data Store API Proof of Concept (POC).
+   - Developed APIs for Risk and Controls data retrieval from our Controls Data Store.
+   - Built the API to segregate requests from different domains and maintain tracking.
+   - Included authorization and authentication for BAM (Business Activity Monitoring).
+   - Actively involved in the ongoing development of this project, contributing to its progress.
 
-**What Are the Benefits (Outcomes):**
-
-1. **Efficient File Comparison:**
-   - The utility provides an efficient and reliable method for comparing files in two servers using SHA-256 hash codes.
-
-2. **Integrity and Consistency:**
-   - By comparing hash codes for each file in both directories, the script ensures the integrity and consistency of files across the servers.
-
-3. **Clear and Organized Reports:**
-   - The script produces clear and organized report files, highlighting duplicate files, blank files, and files present in only one of the servers.
-
-4. **Improved Efficiency and Accuracy:**
-   - This tool significantly improves the efficiency and accuracy of file validation and management processes on Unix servers.
-
-5. **Reliable File Management:**
-   - Organizations can use this script to ensure the reliability and consistency of their file management processes.
-
-This format presents the methodology and benefits in a clear, point-wise manner.
+This format highlights your specific accomplishments and contributions in the Java API development project.
