@@ -1,29 +1,11 @@
-Here's a concise point summarizing your involvement in these tasks:
+Here are concise points for your responsibilities:
 
-- **AXIOM GSIB Project:**
-  - Set up the 7105 Environment for Unix, Axiom, Autosys, and Database.
-  - Managed the AXIOM Server CV10_10_14_0 Upgrade for the 10836 Environment.
-  - Contributed to the enhancement of the Race Migration process, dynamically generating partitions based on REPORTING PERIOD from batch GSIB control table.
-  - Streamlined data organization and improved query performance.
-  - Optimized data flow, transitioning from two data sources to one, resulting in quicker responses and reduced execution time.
+- **Lead for 2023_Q3 AXIOM GSIB Dry Run and Release:**
+  - Took the lead in coordinating the dry run and release for the 2023_Q3 AXIOM GSIB project.
+  - Collaborated with the team to gather necessary artifacts, codes, and test evidence.
+  - Ensured thorough verification of all changes to guarantee a successful release and dry run, preventing production bugs.
 
-This point encapsulates your accomplishments in setting up the environment, performing upgrades, and enhancing data processing efficiency.
-
-Certainly, here are individual points for each of your tasks:
-
-**Setting up 7105 Environment for AXIOM GSIB:**
-- Spearheaded the configuration and setup of the 7105 Environment, encompassing Unix, Axiom, Autosys, and the Database.
-- Ensured the seamless integration of these crucial components, providing a stable foundation for the project's success.
-- Demonstrated meticulous attention to detail and technical expertise to establish a robust working environment.
-
-**AXIOM GSIB Server Upgrade - CV10_10_14_0 for 10836 Environment:**
-- Led the upgrade process for the AXIOM Server, specifically the CV10_10_14_0 version, within the 10836 Environment.
-- Oversaw the transition to the updated version, ensuring compatibility and minimal disruptions to ongoing operations.
-- Conducted thorough testing and quality assurance to guarantee a smooth upgrade process.
-
-**Race Migration to DB Process Enhancement:**
-- Spearheaded the enhancement of the Race Migration process, revamping the entire data flow in Unix environments.
-- Introduced dynamic partition generation based on the REPORTING PERIOD from the GSIB control table, optimizing data organization and query performance.
-- Streamlined data management by consolidating to a single data source, resulting in faster responses and reduced execution time. 
-
-These points highlight your roles and contributions in a professional and comprehensive manner.
+- **FORT Migration to the Database:**
+  - Currently focused on migrating FORT to the database.
+  - Actively involved in loading data into the database and analyzing processing times.
+  - Working on determining the most suitable approach for a smooth and efficient transition.
