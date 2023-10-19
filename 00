@@ -1,33 +1,23 @@
-Certainly, here are behavioral examples that align with your provided data and the values and mindset elements:
+Yes, you can specify a start month and year for your partitions and then provide an end date for the last partition. Here's an example:
 
-1. **Respect:**
-   - Behavioral Example: During technical project collaborations, I actively listened to team members' ideas and feedback, acknowledging and valuing their diverse perspectives. I consistently addressed all colleagues with respect in our communication, fostering a positive and inclusive working environment.
+Assuming you want to partition a table named "sales_data" on the "order_date" column from January 2020 to December 2025, you can use the following SQL script:
 
-2. **Integrity:**
-   - Behavioral Example: While volunteering for coaching and building technical projects, I adhered to the highest ethical standards, ensuring transparency in all aspects of the projects. I maintained honesty and integrity in reporting project progress and challenges.
+```sql
+-- Define the initial partition
+ALTER TABLE sales_data
+ADD PARTITION (PARTITION p202001 VALUES LESS THAN (TO_DATE('2020-02-01', 'YYYY-MM-DD')));
 
-3. **Service:**
-   - Behavioral Example: In my role as a volunteer coach and technical project contributor, I consistently went above and beyond to assist team members and mentees. I strived to meet their needs and expectations, ensuring their growth and success.
+-- Generate partitions for each month until December 2025
+BEGIN
+  FOR year_month IN 202002..20251201 LOOP
+    EXECUTE IMMEDIATE 'ALTER TABLE sales_data ADD PARTITION (PARTITION p' || TO_CHAR(year_month) || ' VALUES LESS THAN (TO_DATE(''' || TO_CHAR(year_month + 1) || '-01'', ''YYYYMM''))';
+  END LOOP;
+END;
+/
 
-4. **Excellence:**
-   - Behavioral Example: I consistently pursued excellence in my work, especially during the development of technical projects. I set high standards for project quality, encouraged continuous improvement, and was recognized for delivering exceptional results.
+-- Define the final partition
+ALTER TABLE sales_data
+ADD PARTITION (PARTITION p202601 VALUES LESS THAN (TO_DATE('2026-01-01', 'YYYY-MM-DD')));
+```
 
-5. **Stewardship:**
-   - Behavioral Example: While handling technical projects, I took responsibility for the efficient management of resources, whether it was time, budgets, or materials. I minimized waste and demonstrated fiscal responsibility in project execution.
-
-6. **Empower:**
-   - Behavioral Example: In my role as a volunteer coach, I actively provided guidance, mentorship, and opportunities for the growth and development of team members. I encouraged them to take initiative and supported their personal and professional progress.
-
-7. **Challenge:**
-   - Behavioral Example: When handling technical projects, I eagerly embraced challenges as opportunities for growth. I demonstrated resilience and determination in the face of technical difficulties, consistently seeking innovative solutions.
-
-8. **Drive:**
-   - Behavioral Example: In my commitment to providing word-class services, I consistently put in extraordinary effort and energy to meet and exceed expectations. My high level of motivation and dedication resulted in exceptional services, which were recognized and celebrated.
-
-These behavioral examples demonstrate how you've lived up to the company's values and mindset in the context of your volunteering, coaching, technical project contributions, and your drive for word-class services, while also receiving recognition for your excellence and commitment.
-Certainly, it's important to highlight your determination and adaptability in the face of challenges. Here's a way to express that:
-
-"While working on the TCO project, I encountered difficulties due to the use of a programming language that I was familiar with but hadn't applied in a real-time project before. However, I proactively embraced the challenge, invested time and effort to become familiar with the language, and am currently working on the project with confidence. I am committed to completing this migration successfully."
-Certainly, here's a statement that reflects your commitment to stewardship:
-
-"I take stewardship seriously, understanding the importance of responsible resource management. In my role, I prioritize the efficient use of resources, whether it's time, budgets, or materials. Minimizing waste, promoting fiscal responsibility, and ensuring the careful management of assets are integral aspects of my work."
+In this example, the script creates monthly partitions from February 2020 to December 2025 and ends with a partition for January 2026. You can adjust the start and end dates to meet your specific requirements.
