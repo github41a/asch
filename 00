@@ -1,17 +1,77 @@
-Certainly, here's the summary in the format "I did this, and this is how I did it":
+Certainly, here's a summary of the four points, including all the details:
 
-1. **Risk Awareness:** I ensured a deep understanding of work-related risks, company policies, and relevant regulations.
+1. **Unix Environment Sync Utility:**
+   - **What I Did:** Developed an automated solution for comparing and synchronizing files in Unix servers. Implemented it using Python and utilized SHA256 hashing for robust and secure hash generation.
+   - **How I Did It:** Streamlined file management processes, reducing manual validation efforts. This solution ensures reliability and consistency in file management for organizations.
 
-2. **Transparency and Risk Management:** When creating new business processes, I meticulously documented them, highlighting potential risks and detailing control measures, fostering transparency and effective risk management.
+2. **Continuous Learning:**
+   - **What I Did:** Actively participated in learning initiatives, including the Functional Excellence Program and an Immersive Training Program for Full Stack Java Development, enhancing industry knowledge and skills.
+   - **How I Did It:** Kept up with industry trends through continuous learning, ensuring personal and professional growth.
 
-3. **Training and Skill Development:** I consistently completed mandatory training, achieving FEP Level 0, becoming eligible for Level 1, and enrolling in an Immersive Java Development course. Additionally, I actively utilized Pluralsight for continuous skill development.
+3. **Sports and Coaching:**
+   - **What I Did:** Actively participated in sports activities like Badminton and cricket. Organized a successful sports event Olympiad with 1800 colleagues participating in over 600 matches, showcasing coaching skills.
+   - **How I Did It:** Collaborated with fellow team players, providing coaching and fostering a diverse and inclusive sports culture in the workplace.
 
-4. **Process Improvement:** I actively sought process simplification and efficiency enhancements, while strengthening controls to mitigate risks.
+4. **Volunteering:**
+   - **What I Did:** Actively participated as a volunteer at Barclays-organized art exhibitions for the Maher Foundation, raising donations of 2 lakhs. Engaged with visitors, explained the exhibition's purpose, and participated in tree plantation initiatives.
+   - **How I Did It:** Contributed to environmental conservation, enhancing surroundings for a greener, healthier environment.
 
-5. **Continuous Improvement:** Proactively, I addressed areas needing improvement in processes and controls, actively contributing to a culture of continuous improvement.
+Certainly, here's a summary for each of these objectives:
 
-6. **Recognition and Appreciation:** I recognized and appreciated my colleagues who contributed to strengthening controls, reinforcing an accountability culture within our team.
+**1. Unix Environment Sync Utility:**
+   - **What I Did:** Developed an automated solution for comparing and synchronizing files in Unix servers. This solution can be used to ensure the reliability and consistency of file management processes.
+   - **How I Did It:** This solution streamlined file management, reducing manual effort and ensuring robust file management.
 
-7. **Innovation and Technology:** I actively sought innovative solutions and explored new technologies and methodologies to enhance process efficiency and reduce risks, continually striving for positive change.
+**2. ML US 1 - Automatic Commentary Generation:**
+   - **What I Did:** Addressed the problem of executives manually interpreting vast amounts of structured financial data by identifying the need for non-rule-based automatic summary generation.
+   - **How I Did It:** Actively contributed to the development of ML algorithms and an API for data retrieval. Developed the entire user interface (UI) using Angular to provide an enhanced user experience.
 
-8. **Self-Improvement:** I was dedicated to continuous self-improvement, maintaining high performance standards, staying current with industry trends, and setting an example for excellence.
+**3. TCO Migration to Angular and MySQL:**
+   - **What I Did:** Led the migration of TCO Applications from Python to Angular, focusing on language support and real-time user experience.
+   - **How I Did It:** The ongoing development process aims to reduce customer efforts and implement the latest language features for an improved user experience.
+
+**4. Java API Development - Controls Data Store API POC:**
+   - **What I Did:** Actively contributed to the development of the Controls Data Store API Proof of Concept (POC), designing and building APIs for data retrieval.
+   - **How I Did It:** This project is currently in its initial stage, and I'm actively working on its development to ensure its growth and success.
+
+**Service:**
+
+**1. AXIOM CV10 Server Upgrade - CV10_10_14_0 for 10836 Environment:**
+   - **What I Did:** Led the upgrade process for the AXIOM Server to version CV10_10_14_0 within the 10836 Environment.
+   - **How I Did It:** Oversaw the transition to the updated version, conducted thorough testing, and ensured minimal disruptions to ongoing operations.
+
+**2. Setting up 7105 Environment for AXIOM GSIB:**
+   - **What I Did:** Set up the 7105 Environment for Unix, Axiom, Autosys, and Database, specifically for GSIB.
+   - **How I Did It:** This ensured the readiness of the environment for efficient operations.
+
+**3. Race Migration to DB Process Enhancement:**
+   - **What I Did:** Spearheaded enhancements to the Race Migration process, introducing dynamic partition generation based on the REPORTING PERIOD from the GSIB control table, optimizing data organization and query performance.
+   - **How I Did It:** Consolidated data management to a single source, leading to faster responses and reduced execution time.
+
+**Delivery H2:** (Please provide specific details for this section.)
+
+Certainly, here's a more concise and point-wise summary for your accomplishments:
+
+**1. Lead for 2023 Q3 AXIOM GSIB Dry Run and Release:**
+   - Took the lead in coordinating the dry run and release for the 2023 Q3 AXIOM GSIB project.
+   - Collaborated with the team to gather necessary artifacts, codes, and test evidence.
+   - Ensured thorough verification of all changes to guarantee a successful release and dry run, preventing production bugs.
+
+**2. AXIOM CV10 Server Upgrade - CV10_10_14_0 for 10836 Environment:**
+   - Led the upgrade process for the AXIOM Server to version CV10_10_14_0 within the 10836 Environment.
+   - Oversaw the transition to the updated version, ensuring compatibility and minimal disruptions to ongoing operations.
+   - Conducted thorough testing and quality assurance to guarantee a smooth upgrade process.
+
+**3. Setting up 7105 Environment for AXIOM GSIB:**
+   - Set up the 7105 Environment for Unix, Axiom, Autosys, and Database, specifically for GSIB.
+
+**4. Race Migration to DB Process Enhancement:**
+   - Spearheaded the enhancement of the Race Migration process, optimizing data organization and query performance.
+   - Introduced dynamic partition generation based on the REPORTING PERIOD from the GSIB control table.
+   - Streamlined data management by consolidating to a single data source, resulting in faster responses and reduced execution time.
+
+**5. FORT Migration to the Database:**
+   - Actively involved in migrating FORT to the database.
+   - Currently focused on loading data into the database and analyzing processing times, working on determining the most suitable approach for a smooth and efficient transition.
+
+These summaries highlight your key responsibilities and achievements for each of these projects.
