@@ -1,3 +1,23 @@
-Recognition Message:
+Here are some test cases to validate the functionality of the `axiom_gsib_race_load.sh` and `axiom_gsib_race_load.ctl` scripts:
 
-"Recognized for Senior [Your Name]: Always extending a helping hand and providing unwavering encouragement to explore new horizons. Our team is truly blessed to have seniors like you, whose guidance and support inspire us all to reach for excellence. Your dedication and mentorship light the path to success, and we deeply appreciate your commitment to our collective growth. Thank you for being an invaluable part of our journey!"
+1. **Data Loading Test:**
+   - **Test Case:** Execute `axiom_gsib_race_load.sh` script.
+   - **Expected Result:** Data should be loaded into the `GSIB_RACE_DATA_STAGE` table without errors.
+
+2. **ICP NONE Test:**
+   - **Test Case:** Query the `GSIB_RACE_DATA_STAGE` table to check if it only contains records with ICP value equal to "NONE."
+   - **Expected Result:** All records in the table should have ICP set to "NONE."
+
+3. **Partition Test:**
+   - **Test Case:** Insert data into the `GSIB_RACE_DATA_STAGE` table and check if it gets loaded into the appropriate partition based on the ICP value.
+   - **Expected Result:** Data should be stored in the corresponding partition based on ICP value (e.g., "JUL23" for ICP "NONE").
+
+4. **Data Source Test:**
+   - **Test Case:** Execute the `ds race_data_staging` data source and verify if it contains both mapped and unmapped processed RACE Data.
+   - **Expected Result:** The data source should have records of both mapped and unmapped RACE Data.
+
+5. **Count Matching Test:**
+   - **Test Case:** Compare the feed count and processed RACE Data count.
+   - **Expected Result:** The feed count should match the count of processed RACE Data, indicating that data loading and processing were successful.
+
+These test cases cover different aspects of the data loading process, including data integrity, partitioning, data source validation, and count matching. They can help ensure that the scripts are functioning as expected and that data is correctly loaded into the `GSIB_RACE_DATA_STAGE` table.
